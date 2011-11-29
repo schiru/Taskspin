@@ -31,10 +31,18 @@ var Taskspin = (function(){
 			e.preventDefault();
 			e.stopPropagation();
 			$('input:first', public.getTask($task, -1)).focus();
+						
+			// If the last task of the level is being removed and this is not the last task of the root level
+			// -> Remove the surrounding UL-Tag too
+			// 2 nested if's are needed here!
 			if($task.siblings().length == 0)
-				$task.parent().remove();
+			{
+				if(public.getDepth($task) != 0)
+					$task.parent().remove();
+			}			
 			else
 				$task.remove();
+				
 			$(root).trigger('treechange');
 		}
 			
