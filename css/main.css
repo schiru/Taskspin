@@ -1,0 +1,83 @@
+*{ padding: 0; margin: 0; }
+
+body{
+	font-family: Helvetica;
+}
+
+header{
+	padding: 20px;
+}
+
+h1#title{
+	color: #E01B4C;
+	font-size: 36px;
+}
+
+/** Tasklist **/
+
+.checkbox{
+	width:8px;
+	height:8px;
+	border:2px solid #333;
+	margin-top:9px;
+	border-radius: 2px;
+	position: absolute;
+}
+
+.checked{
+	background-color: #090;
+}
+
+li input{
+	border: none;
+	outline: none;
+	font-size:16px;
+	margin-left: -6px;
+	padding: 5px 5px 5px 24px;
+	display:block;
+	width:100%;
+	background-color:#EEE;
+	border:1px solid #CCC;
+	border-bottom:2px solid #999;
+}
+
+li input:focus{
+	border-bottom-color: #E01B4C;
+	background-color: #DDD;
+}
+
+li textarea.note{
+	background-color: #FFF8D1;
+	border: none;
+	width:100%;
+	padding:10px 17px 10px 10px;
+	margin-left:-6px;
+	font-size:12px;
+	line-height: 14px;
+	letter-spacing:0.1em;
+	outline:none;
+	font-family: Helvetica;
+	border-radius: 0 0 3px 3px;
+	border:1px solid #F2C594;
+	border-top: none;
+}
+
+ul{
+	margin-top: 6px;
+	margin-bottom:6px;
+}
+
+ul li{
+	margin-left: 30px;
+	list-style-type: none;
+	padding: 0px;
+	width:800px;
+}
+
+body#debug ul{
+	border:1px solid red;
+}
+
+body#debug li{
+	border: 1px solid #333;
+}
