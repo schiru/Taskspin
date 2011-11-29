@@ -1,14 +1,27 @@
 var Taskspin = (function(){
 	var root = "#tasks";
-	var base = "#tasks ul:first";	
+	var base = "#tasks ul:first";
+	var $emptyTaskWithPlaceholder = $('<li><div class="checkbox" role="checkbox" aria-checked="false"></div><input type="text" value="" placeholder="Start typing your first Task here" /></li>');
+
 	var $dummy = $('<li><div class="checkbox" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li>');
 	var $dummyUL = $('<ul><li><div class="checkbox" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li></ul>');
 		
 	var init = function(){
+		// If a localStorage-object with the name "TASKSPIN_SAVE" exists...
 		if(localStorage.getItem('TASKSPIN_SAVE'))
-			public.setJSON(JSON.parse(localStorage.getItem('TASKSPIN_SAVE')));
+		{
+			// ... parse the JSON-string
+			var jsonObjFromLocalStorage = JSON.parse(localStorage.getItem('TASKSPIN_SAVE'));
+			// If the JSON-string contains at least one element, parse and display it.
+			if (jsonObjFromLocalStorage.length > 0) public.setJSON(jsonObjFromLocalStorage);
+			// Otherwise place an empty task with a placeholder on the root level
+			else $(base).html($emptyTaskWithPlaceholder);
+		}
 		else
+		{
 			public.fixWidth($('#tasks ul li:first'), 0);
+			$(base).html($emptyTaskWithPlaceholder);
+		}
 			
 		$(root).on('keyup', 'input', processKeyUp);
 		$(root).on('keydown', 'input', processKeyDown);
@@ -21,27 +34,25 @@ var Taskspin = (function(){
 	
 	var processKeyDown = function(e){
 		var $task = $(this).parent();
-//		console.log(e);
 		
-		if(
-			( e.keyCode == 8  && e.metaKey ) ||
-			( e.keyCode == 27 && e.target.value.trim() == "" ) 
-		) // CMD+Return or ESC+Empty Task
+		// CMD+Return or ESC+Empty Task
+		if (( e.keyCode == 8  && e.metaKey ) ||
+			( e.keyCode == 27 && e.target.value.trim() == "" )) 
 		{
 			e.preventDefault();
 			e.stopPropagation();
 			$('input:first', public.getTask($task, -1)).focus();
-						
-			// If the last task of the level is being removed and this is not the last task of the root level
-			// -> Remove the surrounding UL-Tag too
-			// 2 nested if's are needed here!
-			if($task.siblings().length == 0)
+			
+			// If this is the last task of this level, delete the surrounding ul-tags
+			if ($task.siblings().length == 0 && public.getDepth($task) != 0) $task.parent().remove();
+			// remove the current task
+			$task.remove();
+			// If there are no childrens on the root-level anymore, create an empty task with placeholder
+			if ($(base).children().length == 0) 
 			{
-				if(public.getDepth($task) != 0)
-					$task.parent().remove();
-			}			
-			else
-				$task.remove();
+				$(base).html($emptyTaskWithPlaceholder);
+				$(base + " li:first input").focus();
+			}
 				
 			$(root).trigger('treechange');
 		}
@@ -57,14 +68,6 @@ var Taskspin = (function(){
 			e.stopPropagation();
 			e.preventDefault();
 			return;
-			
-			// TODO: Don't save emtpy tasks
-			// TODO: Checkboxes. CHECK. BOXES. implement!
-			// TODO: Collapseable levels
-			// TODO: Shift-Enter -> add task at parent level
-			// BUG: Tab press when nothing is focused + first task not empty	
-			// BUG: When removing the last task of an UL the UL stays ->implement UL removal if last Task in level 
-			// BUG: User could delete all tasks
 
 		}
 	};
