@@ -20,7 +20,7 @@ var Taskspin = (function(){
 	};
 	
 	var processKeyDown = function(e){
-		var $taskLi = $(this).parent();
+		var $task = $(this).parent();
 //		console.log(e);
 		
 		if(
@@ -30,8 +30,11 @@ var Taskspin = (function(){
 		{
 			e.preventDefault();
 			e.stopPropagation();
-			$('input:first', public.getTask($taskLi, -1)).focus();
-			$($taskLi).remove();
+			$('input:first', public.getTask($task, -1)).focus();
+			if($task.siblings().length == 0)
+				$task.parent().remove();
+			else
+				$task.remove();
 			$(root).trigger('treechange');
 		}
 			
@@ -42,7 +45,7 @@ var Taskspin = (function(){
 		{
 			var direction = e.keyCode == 38 ? -1 : +1;
 			var sameLevelRequired = e.altKey ? true : false;
-			$('input:first', public.getTask($taskLi, direction, sameLevelRequired)).focus();
+			$('input:first', public.getTask($task, direction, sameLevelRequired)).focus();
 			e.stopPropagation();
 			e.preventDefault();
 			return;
@@ -59,18 +62,18 @@ var Taskspin = (function(){
 	};
 	
 	var processKeyUp = function(e){
-		var $taskLi = $(this).parent();
+		var $task = $(this).parent();
 
 		if(e.keyCode == 9) // Tab
 		{
-			if(public.hasChildTask($taskLi))
+			if(public.hasChildTask($task))
 			{	
-				$('input:first', public.getTask($taskLi, +1, false)).focus();
+				$('input:first', public.getTask($task, +1, false)).focus();
 				return;
 			}	
 			else if(e.target.value.trim() == '') { e. stopPropagation(); return; };
 			
-			$(public.insertTaskAfter($taskLi, true)).find('input:first').focus();
+			$(public.insertTaskAfter($task, true)).find('input:first').focus();
 			e.stopPropagation();
 		}
 
@@ -78,7 +81,7 @@ var Taskspin = (function(){
 		{
 			if(e.target.value.trim() == '') { e.stopPropagation(); return; };
 			
-			$(public.insertTaskAfter($taskLi)).find('input:first').focus();
+			$(public.insertTaskAfter($task)).find('input:first').focus();
 			e.stopPropagation();
 		}
 		
@@ -115,16 +118,16 @@ var Taskspin = (function(){
 		PUBLIC FUNCTIONS
 	*/
 	var public = {
-		insertTaskAfter : function($taskLi, increaseDepth){
+		insertTaskAfter : function($task, increaseDepth){
 			var $new = increaseDepth ? $dummyUL.clone() : $dummy.clone();
 			
 			if(increaseDepth)
 			{
-				$taskLi.append($new);
+				$task.append($new);
 				$new = $new.find('li');
 			}
 			else
-				$new.insertAfter($taskLi);
+				$new.insertAfter($task);
 			
 			// CSS Fix
 			$new.css('width', '-=' + (30*this.getDepth($new)));
