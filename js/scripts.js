@@ -15,12 +15,12 @@ var Taskspin = (function(){
 			// If the JSON-string contains at least one element, parse and display it.
 			if (jsonObjFromLocalStorage.length > 0) public.setJSON(jsonObjFromLocalStorage);
 			// Otherwise place an empty task with a placeholder on the root level
-			else $(base).html($emptyTaskWithPlaceholder);
+			else $(base).html($emptyTaskWithPlaceholder.clone());
 		}
 		else
 		{
 			public.fixWidth($('#tasks ul li:first'), 0);
-			$(base).html($emptyTaskWithPlaceholder);
+			$(base).html($emptyTaskWithPlaceholder.clone());
 		}
 			
 		$(root).on('keyup', 'input', processKeyUp);
@@ -50,7 +50,7 @@ var Taskspin = (function(){
 			// If there are no childrens on the root-level anymore, create an empty task with placeholder
 			if ($(base).children().length == 0) 
 			{
-				$(base).html($emptyTaskWithPlaceholder);
+				$(base).html($emptyTaskWithPlaceholder.clone());
 				$(base + " li:first input").focus();
 			}
 				
