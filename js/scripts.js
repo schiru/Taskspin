@@ -68,7 +68,6 @@ var Taskspin = (function(){
 			e.stopPropagation();
 			e.preventDefault();
 			return;
-
 		}
 	};
 	
@@ -88,12 +87,35 @@ var Taskspin = (function(){
 			e.stopPropagation();
 		}
 
-		if(e.keyCode == 13) // Return
+		if(e.keyCode == 13 && !e.altKey) // Return without ALT
 		{
 			if(e.target.value.trim() == '') { e.stopPropagation(); return; };
 			
 			$(public.insertTaskAfter($task)).find('input:first').focus();
 			e.stopPropagation();
+		}
+		else if(e.keyCode == 13 && e.altKey) // Return with ALT
+		{
+			// Tests whether the current task is "checked" or not
+			if ($task.find('.checkbox:first').hasClass('checked'))
+			{
+				// uncheck it
+				$task.find('.checkbox').removeClass('checked');
+				var $currentTask = $task;
+				// Goes to the root level and unchecks all parent tasks
+				for (var i = 0; i < public.getDepth($task); i++)
+				{
+					$currentTask = public.getParentTask($currentTask, false);
+					$currentTask.find('.checkbox:first').removeClass('checked');
+				}
+			}
+			else
+			{
+				$task.find('.checkbox').addClass('checked');
+				// TO-DO: if all siblings are checked, check the parent task
+				//        if all siblings from the parent task are checked
+				//        check the parent's parent, and so on...
+			}
 		}
 		
 		$(root).trigger('treechange');
