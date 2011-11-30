@@ -52,7 +52,11 @@ var Taskspin = (function(){
 		{
 			e.preventDefault();
 			e.stopPropagation();
-			$task.getTask(-1, false).find('input:first').focus();
+			console.log($task.parent().children().index($task));
+			if ($task.parent().children().index($task) == 0 && $task.getDepth() == 0)
+				$($task.getTask(1, true)).find('input:first').focus();
+			else
+				$($task.getTask(-1, false)).find('input:first').focus();
 			
 			// If this is the last task of this level, delete the surrounding ul-tags
 			if ($task.siblings().length == 0 && $task.getDepth() != 0) $task.parent().remove();
@@ -293,12 +297,6 @@ var Taskspin = (function(){
 			if(!sameLevelRequired && absoluteLocation < 0 && this.getDepth() > 0)
 			{
 				return this.getParentTask(false);
-			}
-			// 
-			else if (!sameLevelRequired && absoluteLocation < 0 && this.getDepth() == 0)
-			{
-				console.log($siblings.index());
-				return this.getTask(1);
 			}
 			
 			// If the current Task is the last in that level get the next parent
