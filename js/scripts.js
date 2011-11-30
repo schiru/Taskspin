@@ -21,6 +21,9 @@ var Taskspin = (function(){
 		{
 			$(base).append($emptyTaskWithPlaceholder.clone());
 		}
+		
+		// Focuses the first task
+		$(base).find('input:first').focus();
 			
 		$(root).on('keyup', 'input', processKeyUp);
 		$(root).on('keydown', 'input', processKeyDown);
