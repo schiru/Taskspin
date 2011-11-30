@@ -24,8 +24,18 @@ h1#title{
 	position: absolute;
 }
 
+.checkbox:hover{
+	border-color: #E01B4C;
+}
+
+.checkbox:active{
+	background-color: #911031;
+	border-color: #4D0013;
+}
+
 .checked{
-	background-color: lime;
+	background-color: #E01B4C;
+	border-color: #4D0013;
 }
 
 li input{
