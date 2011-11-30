@@ -278,8 +278,8 @@ var Taskspin = (function(){
 			if(getLast)
 			{
 				var $test = this.children('ul').children('li:last');
-				if(this.hasChildTask())
-					return this.getChildTask(true);
+				if($test.hasChildTask())
+					return $test.getChildTask(true);
 				else
 					return $test;
 			}
