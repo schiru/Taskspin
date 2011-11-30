@@ -87,6 +87,11 @@ var Taskspin = (function(){
 			else if(e.target.value.trim() == '') { e. stopPropagation(); return; };
 			
 			$(public.insertTaskAfter($task, true)).find('input:first').focus();
+			
+			// Uncheck all parent tasks up to the root-level
+			$task.find('.checkbox').removeClass('checked');
+			public.uncheckAllParents($task);
+			
 			e.stopPropagation();
 		}
 
@@ -96,6 +101,9 @@ var Taskspin = (function(){
 			
 			$(public.insertTaskAfter($task)).find('input:first').focus();
 			e.stopPropagation();
+			
+			// Uncheck all parent tasks up to the root-level
+			public.uncheckAllParents($task);
 		}
 		else if(e.keyCode == 13 && e.altKey) // Return with ALT
 		{
@@ -104,13 +112,7 @@ var Taskspin = (function(){
 			{
 				// uncheck it
 				$task.find('.checkbox').removeClass('checked');
-				var $currentTask = $task;
-				// Goes to the root level and unchecks all parent tasks
-				for (var i = 0; i < public.getDepth($task); i++)
-				{
-					$currentTask = public.getParentTask($currentTask, false);
-					$currentTask.find('.checkbox:first').removeClass('checked');
-				}
+				public.uncheckAllParents($task);
 			}
 			else
 			{
@@ -292,6 +294,20 @@ var Taskspin = (function(){
 			$(base).remove('*');	
 			parseJSONObject(JSONObj);
 			$(root).trigger('treechange');		
+		}
+		
+		, uncheckAllParents : function($taskToBeginn, readjustLevel)
+		{
+			var $currentTask = $taskToBeginn;
+			var depth = public.getDepth($taskToBeginn) + ((readjustLevel) ? readjustLevel : 0);
+			console.log(depth);
+			// Goes to the root level and unchecks all parent tasks
+			for (var i = 0; i < depth; i++)
+			{
+				$currentTask = public.getParentTask($currentTask, false);
+				$currentTask.find('.checkbox:first').removeClass('checked');
+				console.log($currentTask);
+			}
 		}
 	};
 	

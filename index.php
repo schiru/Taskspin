@@ -2,7 +2,8 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title></title>
+		<title>Taskspin.</title>
+		<link rel="icon" href="favicon.png" type="image/png" />
 		<link rel="stylesheet" href="css/main.css">
 	</head>
 	<body>
