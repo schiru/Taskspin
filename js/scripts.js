@@ -52,7 +52,7 @@ var Taskspin = (function(){
 		{
 			e.preventDefault();
 			e.stopPropagation();
-			$('input:first', $task.getTask(1, true)).focus();
+			$('input:first', $task.getTask(-1, false)).focus();
 			
 			// If this is the last task of this level, delete the surrounding ul-tags
 			if ($task.siblings().length == 0 && $task.getDepth() != 0) $task.parent().remove();
@@ -294,8 +294,10 @@ var Taskspin = (function(){
 			{
 				return this.getParentTask(false);
 			}
-			else if (!sameLevelRequired && absoluteLocation < 0 && this.getDepth() == 0 && this.siblings().length == 0)
+			// 
+			else if (!sameLevelRequired && absoluteLocation < 0 && this.getDepth() == 0)
 			{
+				console.log($siblings.index());
 				return this.getTask(1);
 			}
 			
