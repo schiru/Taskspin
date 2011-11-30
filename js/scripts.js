@@ -186,7 +186,7 @@ var Taskspin = (function(){
 				{
 					output[counter] = {
 						"title": $currentChild.find('input:first').val()
-						, "checked": public.isChecked($currentChild)
+						, "checked": $currentChild.isChecked()
 						, "depth": depth
 					};
 					
@@ -237,9 +237,6 @@ var Taskspin = (function(){
 			}
 		}
 		
-		, isChecked : function($task){
-			return $task.find('.checkbox:first').hasClass(CHECKBOX_CHECKED_CLASS);
-		}
 	};
 	
 	/**************************************************
@@ -278,7 +275,7 @@ var Taskspin = (function(){
 			if(getLast)
 			{
 				var $test = this.children('ul').children('li:last');
-				if($test.hasChildTask())
+				if($testh.hasChildTask())
 					return $test.getChildTask(true);
 				else
 					return $test;
@@ -327,6 +324,10 @@ var Taskspin = (function(){
 				absoluteLocation = 0;
 			
 			return $siblings.eq(absoluteLocation);
+		}
+		
+		, $.fn.isChecked = function(){
+			return this.find('.checkbox:first').hasClass(CHECKBOX_CHECKED_CLASS);
 		}
 	})(jQuery);
 	
