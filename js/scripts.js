@@ -59,6 +59,8 @@ var Taskspin = (function(){
 				$($task.getTask(1, true)).find('input:first').focus();
 			else
 				$($task.getTask(-1, false)).find('input:first').focus();
+				
+			var $tasksParent = $task.getParentTask();
 			
 			// If this is the last task of this level, delete the surrounding ul-tags
 			if ($task.siblings().length == 0 && $task.getDepth() != 0) $task.parent().remove();
@@ -74,6 +76,9 @@ var Taskspin = (function(){
 				$(base).append($_emptyTaskWithPlaceholder);
 				$_emptyTaskWithPlaceholder.find('input:first').focus();
 			}
+			
+			console.log($tasksParent);
+			$tasksParent.find('li:first').setParentsCheckedIfAllChildrensAreChecked();
 				
 			$(root).trigger('treechange');
 		}
@@ -370,6 +375,16 @@ var Taskspin = (function(){
 			return true;
 		}
 		
+		, $.fn.setParentsCheckedIfAllChildrensAreChecked = function(){
+			for(var currentParent = this.getParentTask(); currentParent.length > 0; currentParent = currentParent.getParentTask())
+			{
+				if(currentParent.checkboxes().areAllChecked())
+					currentParent.checkbox().check();
+				else
+					break; // Improves efficiency, because if this parent Task is not checked the one above can't be checked either
+			}
+		}
+		
 		, $.fn.toggleCheckboxes = function()
 		{
 			// Tests whether the current task is "checked" or not
@@ -382,15 +397,9 @@ var Taskspin = (function(){
 			else
 			{
 				this.checkboxes().check();
+				this.setParentsCheckedIfAllChildrensAreChecked();
+				// Check if the parents Task tasks are checked 
 				
-				// Check if the parent Tasks tasks are checked 
-				for(var currentParent = this.getParentTask(); currentParent.length > 0; currentParent = currentParent.getParentTask())
-				{
-					if(currentParent.checkboxes().areAllChecked())
-						currentParent.checkbox().check();
-					else
-						break; // Improves efficiency, because if this parent Task is not checked the one above can't be checked either
-				}
 			}
 		}
 	})(jQuery);
