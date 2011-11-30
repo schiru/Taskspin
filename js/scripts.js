@@ -54,7 +54,8 @@ var Taskspin = (function(){
 			e.stopPropagation();
 			var taskSiblingsAndSelf = $task.siblings().andSelf();
 			var taskIndex = taskSiblingsAndSelf.index($task);
-			if ((taskIndex == 0 && $task.getDepth() == 0) ||
+			var taskDepth = $task.getDepth();
+			if ((taskIndex == 0 && taskDepth == 0) ||
 			    (taskIndex < taskSiblingsAndSelf.length - 1))
 				$($task.getTask(1, true)).find('input:first').focus();
 			else
@@ -76,9 +77,9 @@ var Taskspin = (function(){
 				$(base).append($_emptyTaskWithPlaceholder);
 				$_emptyTaskWithPlaceholder.find('input:first').focus();
 			}
-			
-			console.log($tasksParent);
-			$tasksParent.find('li:first').setParentsCheckedIfAllChildrensAreChecked();
+			//console.log($tasksParent);
+			if (taskDepth > 0)
+				$tasksParent.find('li:first').setParentsCheckedIfAllChildrensAreChecked();
 				
 			$(root).trigger('treechange');
 		}
