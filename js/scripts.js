@@ -40,6 +40,7 @@ var Taskspin = (function(){
 	var processClickOnCheckbox = function(e)
 	{
 		public.toggleCheckboxes($(e.target).parent());
+		$(root).trigger('treechange');
 	}
 	
 	var processKeyDown = function(e){
@@ -140,8 +141,9 @@ var Taskspin = (function(){
 			// Insert Task
 			var $inserted = public.insertTaskAfter(appendTasksTo, increaseDepth);
 			
-			// Add values
-			$inserted.find('input:first').val(obj[i].title)
+			// Add values and check checkboxes if needed
+			$inserted.find('input:first').val(obj[i].title);
+			if(obj[i].checked) public.toggleCheckboxes($inserted);
 			
 			if(obj[i].childTasks)
 				parseJSONObject(obj[i].childTasks, $inserted, currentDepth);
@@ -278,6 +280,7 @@ var Taskspin = (function(){
 				{
 					output[counter] = {
 						"title": $currentChild.find('input:first').val()
+						, "checked": public.isChecked($currentChild)
 						, "depth": depth
 					};
 					
@@ -326,6 +329,10 @@ var Taskspin = (function(){
 				//        if all siblings from the parent task are checked
 				//        check the parent's parent, and so on...
 			}
+		}
+		
+		, isChecked : function($task){
+			return $task.find('.checkbox:first').hasClass(CHECKBOX_CHECKED_CLASS);
 		}
 	};
 	
