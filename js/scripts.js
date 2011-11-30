@@ -294,7 +294,7 @@ var Taskspin = (function(){
 			{
 				return this.getParentTask(false);
 			}
-			else if (!sameLevelRequired && absoluteLocation < 0 && this.getDepth() == 0)
+			else if (!sameLevelRequired && absoluteLocation < 0 && this.getDepth() == 0 && this.siblings().length == 0)
 			{
 				return this.getTask(1);
 			}
