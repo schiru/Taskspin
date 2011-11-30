@@ -15,6 +15,10 @@ h1#title{
 
 /** Tasklist **/
 
+/*
+
+-- Backup
+
 .checkbox{
 	width:8px;
 	height:8px;
@@ -36,6 +40,30 @@ h1#title{
 .checked{
 	background-color: #E01B4C;
 	border-color: #4D0013;
+}*/
+
+.checkbox{
+	width:8px;
+	height:8px;
+	border:2px solid #333;
+	margin-top:9px;
+	border-radius: 2px;
+	position: absolute;
+}
+
+.checkbox:hover{
+	box-shadow: 0 0 5px #1186D4;
+	background-color:#78C0F0;
+}
+
+.checkbox:active{
+	background-color: #236FA1;
+	border-color: #4D0013;
+}
+
+.checked{
+	background-color: #4AA0D9 !important;
+	border-color: #052A42;
 }
 
 li input{
