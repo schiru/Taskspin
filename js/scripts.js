@@ -52,7 +52,7 @@ var Taskspin = (function(){
 		{
 			e.preventDefault();
 			e.stopPropagation();
-			$('input:first', $task.getTask(-1)).focus();
+			$('input:first', $task.getTask(-1, true)).focus();
 			
 			// If this is the last task of this level, delete the surrounding ul-tags
 			if ($task.siblings().length == 0 && $task.getDepth() != 0) $task.parent().remove();
@@ -275,7 +275,7 @@ var Taskspin = (function(){
 			if(getLast)
 			{
 				var $test = this.children('ul').children('li:last');
-				if($testh.hasChildTask())
+				if($test.hasChildTask())
 					return $test.getChildTask(true);
 				else
 					return $test;
