@@ -66,7 +66,7 @@ var Taskspin = (function(){
 				
 				// Append the empty Task and focus its input field
 				$(base).append($_emptyTaskWithPlaceholder);
-				$_emptyTaskWithPlaceholder).find('input:first').focus();
+				$_emptyTaskWithPlaceholder.find('input:first').focus();
 			}
 				
 			$(root).trigger('treechange');
@@ -79,7 +79,7 @@ var Taskspin = (function(){
 		{
 			var direction = e.keyCode == 38 ? -1 : +1;
 			var sameLevelRequired = e.altKey ? true : false;
-			$task.getTask(direction, sameLevelRequired)).find('input:first').focus();
+			$task.getTask(direction, sameLevelRequired).find('input:first').focus();
 			e.stopPropagation();
 			e.preventDefault();
 			return;
