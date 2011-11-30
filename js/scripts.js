@@ -15,12 +15,11 @@ var Taskspin = (function(){
 			// If the JSON-string contains at least one element, parse and display it.
 			if (jsonObjFromLocalStorage.length > 0) public.setJSON(jsonObjFromLocalStorage);
 			// Otherwise place an empty task with a placeholder on the root level
-			else $(base).html($emptyTaskWithPlaceholder.clone());
+			else $(base).append($emptyTaskWithPlaceholder.clone());
 		}
 		else
 		{
-			public.fixWidth($('#tasks ul li:first'), 0);
-			$(base).html($emptyTaskWithPlaceholder.clone());
+			$(base).append($emptyTaskWithPlaceholder.clone());
 		}
 			
 		$(root).on('keyup', 'input', processKeyUp);
@@ -50,8 +49,12 @@ var Taskspin = (function(){
 			// If there are no childrens on the root-level anymore, create an empty task with placeholder
 			if ($(base).children().length == 0) 
 			{
-				$(base).html($emptyTaskWithPlaceholder.clone());
-				$(base + " li:first input").focus();
+				// Create a clone instance of an empty Task with placeholder
+				var $_emptyTaskWithPlaceholder = $emptyTaskWithPlaceholder.clone();
+				
+				// Append the empty Task and focus its input field
+				$(base).append($_emptyTaskWithPlaceholder);
+				$('input:first', $_emptyTaskWithPlaceholder).focus();
 			}
 				
 			$(root).trigger('treechange');
