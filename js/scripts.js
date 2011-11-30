@@ -52,7 +52,7 @@ var Taskspin = (function(){
 		{
 			e.preventDefault();
 			e.stopPropagation();
-			$('input:first', $task.getTask(-1, true)).focus();
+			$('input:first', $task.getTask(1, true)).focus();
 			
 			// If this is the last task of this level, delete the surrounding ul-tags
 			if ($task.siblings().length == 0 && $task.getDepth() != 0) $task.parent().remove();
