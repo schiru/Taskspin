@@ -23,7 +23,7 @@ var Taskspin = (function(){
 		}
 		
 		// Focuses the first task
-		$(base).find('input:first').focus();
+		$(base).find('li:first input:first').focus();
 			
 		$(root).on('keyup', 'input', processKeyUp);
 		$(root).on('keydown', 'input', processKeyDown);
