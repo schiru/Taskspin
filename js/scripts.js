@@ -21,15 +21,24 @@ var Taskspin = (function(){
 		{
 			$(base).append($emptyTaskWithPlaceholder.clone());
 		}
+		
+		// Focuses the first task
+		$(base).find('li:first input:first').focus();
 			
 		$(root).on('keyup', 'input', processKeyUp);
 		$(root).on('keydown', 'input', processKeyDown);
+		$(root).on('click', '.checkbox', processClickOnCheckbox);
 		
 		// Custom event handler
 		$(root).on('treechange', save);
 			
 		return public;
 	};
+	
+	var processClickOnCheckbox = function(e)
+	{
+		public.toggleCheckboxes($(e.target).parent());
+	}
 	
 	var processKeyDown = function(e){
 		var $task = $(this).parent();
@@ -107,20 +116,7 @@ var Taskspin = (function(){
 		}
 		else if(e.keyCode == 13 && e.altKey) // Return with ALT
 		{
-			// Tests whether the current task is "checked" or not
-			if ($task.find('.checkbox:first').hasClass('checked'))
-			{
-				// uncheck current Task and uncheck all child tasks too (if there are any)
-				$task.find('.checkbox').removeClass('checked');
-				public.uncheckAllParents($task);
-			}
-			else
-			{
-				$task.find('.checkbox').addClass('checked');
-				// TO-DO: if all siblings are checked, check the parent task
-				//        if all siblings from the parent task are checked
-				//        check the parent's parent, and so on...
-			}
+			public.toggleCheckboxes($task);
 		}
 		
 		$(root).trigger('treechange');
@@ -231,9 +227,13 @@ var Taskspin = (function(){
 			}
 			
 			// If absoluteLocation < 0 get Task of higher level
-			if(!sameLevelRequired && absoluteLocation < 0)
+			if(!sameLevelRequired && absoluteLocation < 0 && this.getDepth($relationLi) > 0)
 			{
 				return this.getParentTask($relationLi, false);
+			}
+			else if (!sameLevelRequired && absoluteLocation < 0 && this.getDepth($relationLi) == 0)
+			{
+				return this.getTask($relationLi, 1);
 			}
 			
 			// If the current Task is the last in that level get the next parent
@@ -300,13 +300,29 @@ var Taskspin = (function(){
 		{
 			var $currentTask = $taskToBeginn;
 			var depth = public.getDepth($taskToBeginn) + ((readjustLevel) ? readjustLevel : 0);
-			console.log(depth);
 			// Goes to the root level and unchecks all parent tasks
 			for (var i = 0; i < depth; i++)
 			{
 				$currentTask = public.getParentTask($currentTask, false);
 				$currentTask.find('.checkbox:first').removeClass('checked');
-				console.log($currentTask);
+			}
+		}
+		
+		, toggleCheckboxes : function($task)
+		{
+			// Tests whether the current task is "checked" or not
+			if ($task.find('.checkbox:first').hasClass('checked'))
+			{
+				// uncheck current Task and uncheck all child tasks too (if there are any)
+				$task.find('.checkbox').removeClass('checked');
+				public.uncheckAllParents($task);
+			}
+			else
+			{
+				$task.find('.checkbox').addClass('checked');
+				// TO-DO: if all siblings are checked, check the parent task
+				//        if all siblings from the parent task are checked
+				//        check the parent's parent, and so on...
 			}
 		}
 	};
