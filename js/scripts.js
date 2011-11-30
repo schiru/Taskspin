@@ -107,7 +107,7 @@ var Taskspin = (function(){
 			e.stopPropagation();
 		}
 
-		if(e.keyCode == 13 && !e.altKey) // Return without ALT
+		if(e.keyCode == 13 && !e.altKey && !e.shiftKey) // Return without ALT and without SHIFT
 		{
 			if(e.target.value.trim() == '') { e.stopPropagation(); return; };
 			
@@ -115,11 +115,23 @@ var Taskspin = (function(){
 			e.stopPropagation();
 			
 			// Uncheck all parent tasks up to the root-level
-			public.uncheckAllParents($task);
+			$task.uncheckAllParents();
 		}
-		else if(e.keyCode == 13 && e.altKey) // Return with ALT
+		else if(e.keyCode == 13 && e.altKey && !e.shiftKey) // Return with ALT and without SHIFT
 		{
 			$task.toggleCheckboxes();
+			return;
+		}
+		else if(e.keyCode == 13 && e.shiftKey && !e.altKey) // Return with SHIFT
+		{
+			public.insertTaskAfter($task.getParentTask()).find('input:first').focus();
+			e.stopPropagation();
+			return;
+		}
+		else if(e.keyCode == 13 && e.shiftKey && e.altKey) // Return + Shift + Alt
+		{
+			$(base).append($dummy.clone())
+			$task.getRootlevelParent().next().find('input:first').focus();
 		}
 		
 		$(root).trigger('treechange');
@@ -294,6 +306,14 @@ var Taskspin = (function(){
 				absoluteLocation = 0;
 			
 			return $siblings.eq(absoluteLocation);
+		}
+		
+		, $.fn.getRootlevelParent = function()
+		{
+			$currentTask = this;
+			for (var i = 0; i < this.getDepth(); i++)
+				$currentTask = $currentTask.getParentTask(false);
+			return $currentTask;
 		}
 		
 		, $.fn.isChecked = function(){
