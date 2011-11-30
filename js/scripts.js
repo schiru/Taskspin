@@ -29,7 +29,7 @@ var Taskspin = (function(){
 			
 		$(root).on('keyup', 'input', processKeyUp);
 		$(root).on('keydown', 'input', processKeyDown);
-		$(root).on('click', '.checkbox', processClickOnCheckbox);
+		$(root).on('click', '.' + CHECKBOX_CLASS, processClickOnCheckbox);
 		
 		// Custom event handler
 		$(root).on('treechange', save);
@@ -51,10 +51,10 @@ var Taskspin = (function(){
 		{
 			e.preventDefault();
 			e.stopPropagation();
-			$('input:first', public.getTask($task, -1)).focus();
+			$('input:first', $task.getTask(-1)).focus();
 			
 			// If this is the last task of this level, delete the surrounding ul-tags
-			if ($task.siblings().length == 0 && public.getDepth($task) != 0) $task.parent().remove();
+			if ($task.siblings().length == 0 && $task.getDepth() != 0) $task.parent().remove();
 			// remove the current task
 			$task.remove();
 			// If there are no childrens on the root-level anymore, create an empty task with placeholder
@@ -78,7 +78,7 @@ var Taskspin = (function(){
 		{
 			var direction = e.keyCode == 38 ? -1 : +1;
 			var sameLevelRequired = e.altKey ? true : false;
-			$('input:first', public.getTask($task, direction, sameLevelRequired)).focus();
+			$('input:first', $task.getTask(direction, sameLevelRequired)).focus();
 			e.stopPropagation();
 			e.preventDefault();
 			return;
@@ -90,9 +90,9 @@ var Taskspin = (function(){
 
 		if(e.keyCode == 9) // Tab
 		{
-			if(public.hasChildTask($task))
+			if($task.hasChildTask())
 			{	
-				$('input:first', public.getTask($task, +1, false)).focus();
+				$('input:first', $task.getTask(+1, false)).focus();
 				return;
 			}	
 			else if(e.target.value.trim() == '') { e. stopPropagation(); return; };
@@ -166,104 +166,10 @@ var Taskspin = (function(){
 				$new.insertAfter($task);
 			
 			// CSS Fix
-			$new.css('width', '-=' + (30*this.getDepth($new)));
+			$new.css('width', '-=' + (30*($new.getDepth())));
 			return $new;
 		}
-		
-		, getParentTask : function($obj, getNext){
-			var $test = $obj.parentsUntil(root);
-			if(getNext) 
-				var $next = $test.next();
-			
-			// Return an empty array, like jQuery does.
-			if($test.length <= 1)
-				return []; // Li has just one parent (the surrounding UL) but no parent Li
-			
-			if(getNext)
-			{
-				var $next = $test.eq(1).next();
-				return $next.length ? $next : this.getParentTask($test, true);
-			}
-			else
-				return $test.eq(1); // Return the Li at index 1, index 0 is the UL
-		}
-		
-		, hasChildTask : function($obj){
-			return $obj.find('ul li').length ? true : false;
-		}
-		
-		, getChildTask : function($obj, getLast){
-			if(getLast)
-			{
-				var $test = $obj.children('ul').children('li:last');
-				if(this.hasChildTask($test))
-					return this.getChildTask($test, true);
-				else
-					return $test;
-			}
-			else
-				return $obj.find('ul li:first');
-		}
-		
-		, getTask : function($relationLi, relativeLocation, sameLevelRequired){
-			sameLevelRequired = sameLevelRequired ? sameLevelRequired : false;
-		
-			// Try to get tasks by the order they are visible, no matter if they
-			// are in the same level
-			if(sameLevelRequired == false && relativeLocation > 0 && this.hasChildTask($relationLi))
-			{
-				return this.getChildTask($relationLi);
-			}
-			
-			var $siblings = $relationLi.parent().children();
-			
-			// In current level
-			var currentLocation = $siblings.index($relationLi);
-			var absoluteLocation = currentLocation + relativeLocation;
-
-			// If the previous task has a child task and the current one is not the first one 
-			// -> return the childtask of the previous one
-			if(sameLevelRequired == false && relativeLocation < 0 && absoluteLocation >= 0 && this.hasChildTask($siblings.eq(absoluteLocation)))
-			{
-				return this.getChildTask($siblings.eq(absoluteLocation), true);
-			}
-			
-			// If absoluteLocation < 0 get Task of higher level
-			if(!sameLevelRequired && absoluteLocation < 0 && this.getDepth($relationLi) > 0)
-			{
-				return this.getParentTask($relationLi, false);
-			}
-			else if (!sameLevelRequired && absoluteLocation < 0 && this.getDepth($relationLi) == 0)
-			{
-				return this.getTask($relationLi, 1);
-			}
-			
-			// If the current Task is the last in that level get the next parent
-			else if(!sameLevelRequired && absoluteLocation >= $siblings.length)
-				return this.getParentTask($relationLi, true);
-			else if(sameLevelRequired && absoluteLocation >= $siblings.length)
-				absoluteLocation = 0;
-			
-			return $siblings.eq(absoluteLocation);
-		}
-	
-		, fixWidth : function($obj, depth){
-			$obj.css('width', '-=' + (30*depth) + 'px');
-			
-			// If there is a children process it
-			$children = $obj.children().find('li');
-			if($children.length > 0)
-				this.fixWidth($($children[0]), depth+1);
 				
-			$next = $obj.next();
-			if($next.length > 0)
-				this.fixWidth($($next[0]), depth);
-		}
-		
-		, getDepth : function($obj){
-			return $obj.parents('li').length;
-		}
-		
 		, getJSON : function($tasks, depth){
 			$tasks = $tasks ? $tasks : $(base);
 			depth = depth ? depth : 0;
@@ -281,7 +187,7 @@ var Taskspin = (function(){
 						, "depth": depth
 					};
 					
-					if(this.hasChildTask($currentChild))
+					if($currentChild.hasChildTask())
 						output[counter].childTasks = this.getJSON($currentChild.children('ul'), depth+1);
 
 					counter++;
@@ -301,11 +207,11 @@ var Taskspin = (function(){
 		, uncheckAllParents : function($taskToBeginn, readjustLevel)
 		{
 			var $currentTask = $taskToBeginn;
-			var depth = public.getDepth($taskToBeginn) + ((readjustLevel) ? readjustLevel : 0);
+			var depth = $taskToBeginn.getDepth() + ((readjustLevel) ? readjustLevel : 0);
 			// Goes to the root level and unchecks all parent tasks
 			for (var i = 0; i < depth; i++)
 			{
-				$currentTask = public.getParentTask($currentTask, false);
+				$currentTask = $currentTask.getParentTask(false);
 				$currentTask.find('.checkbox:first').removeClass(CHECKBOX_CHECKED_CLASS);
 			}
 		}
@@ -328,6 +234,94 @@ var Taskspin = (function(){
 			}
 		}
 	};
+	
+	/**************************************************
+	 * Object Functions
+	 */
+	(function($)
+	{
+		$.fn.getDepth = function()
+		{
+			return this.parents('li').length
+		}
+		
+		, $.fn.getParentTask = function(getNext){
+			var $test = this.parentsUntil(root);
+			if(getNext) 
+				var $next = $test.next();
+			
+			// Return an empty array, like jQuery does.
+			if($test.length <= 1)
+				return []; // Li has just one parent (the surrounding UL) but no parent Li
+			
+			if(getNext)
+			{
+				var $next = $test.eq(1).next();
+				return $next.length ? $next : $test.getParentTask(true);
+			}
+			else
+				return $test.eq(1); // Return the Li at index 1, index 0 is the UL
+		}
+		
+		, $.fn.hasChildTask = function(){
+			return this.find('ul li').length ? true : false;
+		}
+		
+		, $.fn.getChildTask = function(getLast){
+			if(getLast)
+			{
+				var $test = this.children('ul').children('li:last');
+				if(this.hasChildTask())
+					return this.getChildTask(true);
+				else
+					return $test;
+			}
+			else
+				return this.find('ul li:first');
+		}
+		
+		, $.fn.getTask = function(relativeLocation, sameLevelRequired){
+			sameLevelRequired = sameLevelRequired ? sameLevelRequired : false;
+		
+			// Try to get tasks by the order they are visible, no matter if they
+			// are in the same level
+			if(sameLevelRequired == false && relativeLocation > 0 && this.hasChildTask())
+			{
+				return this.getChildTask();
+			}
+			
+			var $siblings = this.parent().children();
+			
+			// In current level
+			var currentLocation = $siblings.index(this);
+			var absoluteLocation = currentLocation + relativeLocation;
+
+			// If the previous task has a child task and the current one is not the first one 
+			// -> return the childtask of the previous one
+			if(sameLevelRequired == false && relativeLocation < 0 && absoluteLocation >= 0 && $siblings.eq(absoluteLocation).hasChildTask())
+			{
+				return $siblings.eq(absoluteLocation).getChildTask(true);
+			}
+			
+			// If absoluteLocation < 0 get Task of higher level
+			if(!sameLevelRequired && absoluteLocation < 0 && this.getDepth() > 0)
+			{
+				return this.getParentTask(false);
+			}
+			else if (!sameLevelRequired && absoluteLocation < 0 && this.getDepth() == 0)
+			{
+				return this.getTask(1);
+			}
+			
+			// If the current Task is the last in that level get the next parent
+			else if(!sameLevelRequired && absoluteLocation >= $siblings.length)
+				return this.getParentTask(true);
+			else if(sameLevelRequired && absoluteLocation >= $siblings.length)
+				absoluteLocation = 0;
+			
+			return $siblings.eq(absoluteLocation);
+		}
+	})(jQuery);
 	
 	// Init and Expose
 	return init();
