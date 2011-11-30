@@ -52,7 +52,7 @@ var Taskspin = (function(){
 		{
 			e.preventDefault();
 			e.stopPropagation();
-			$('input:first', $task.getTask(-1, false)).focus();
+			$task.getTask(-1, false).find('input:first').focus();
 			
 			// If this is the last task of this level, delete the surrounding ul-tags
 			if ($task.siblings().length == 0 && $task.getDepth() != 0) $task.parent().remove();
@@ -66,7 +66,7 @@ var Taskspin = (function(){
 				
 				// Append the empty Task and focus its input field
 				$(base).append($_emptyTaskWithPlaceholder);
-				$('input:first', $_emptyTaskWithPlaceholder).focus();
+				$_emptyTaskWithPlaceholder).find('input:first').focus();
 			}
 				
 			$(root).trigger('treechange');
@@ -79,7 +79,7 @@ var Taskspin = (function(){
 		{
 			var direction = e.keyCode == 38 ? -1 : +1;
 			var sameLevelRequired = e.altKey ? true : false;
-			$('input:first', $task.getTask(direction, sameLevelRequired)).focus();
+			$task.getTask(direction, sameLevelRequired)).find('input:first').focus();
 			e.stopPropagation();
 			e.preventDefault();
 			return;
@@ -93,7 +93,7 @@ var Taskspin = (function(){
 		{
 			if($task.hasChildTask())
 			{	
-				$('input:first', $task.getTask(+1, false)).focus();
+				$task.getTask(+1, false).find('input:first').focus();
 				return;
 			}	
 			else if(e.target.value.trim() == '') { e. stopPropagation(); return; };
