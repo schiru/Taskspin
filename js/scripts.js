@@ -320,6 +320,16 @@ var Taskspin = (function(){
 			return this.find('.checkbox:first').hasClass(CHECKBOX_CHECKED_CLASS);
 		}
 		
+		, $.fn.check = function(){
+			if(!this.isChecked()) this.addClass(CHECKBOX_CHECKED_CLASS);
+			return this; // Chaining
+		}
+
+		, $.fn.uncheck = function(){
+			if(this.isChecked()) this.removeClassClass(CHECKBOX_CHECKED_CLASS);
+			return this; // Chaining
+		}
+
 		, $.fn.uncheckAllParents = function(readjustLevel)
 		{
 			var $currentTask = this;
