@@ -110,7 +110,7 @@ var Taskspin = (function(){
 			// Tests whether the current task is "checked" or not
 			if ($task.find('.checkbox:first').hasClass('checked'))
 			{
-				// uncheck it
+				// uncheck current Task and uncheck all child tasks too (if there are any)
 				$task.find('.checkbox').removeClass('checked');
 				public.uncheckAllParents($task);
 			}
