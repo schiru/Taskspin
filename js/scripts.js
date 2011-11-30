@@ -357,6 +357,19 @@ var Taskspin = (function(){
 			}
 		}
 		
+		, $.fn.areAllChecked = function(){
+			// for use of x.checkboxes.areAllChecked()
+			
+			// Start with 1, because 0 is the parent Task
+			for(var i = 1; i < this.length; i++)
+			{
+				if(!$(this[i]).isChecked())
+					return false;
+			}
+			
+			return true;
+		}
+		
 		, $.fn.toggleCheckboxes = function()
 		{
 			// Tests whether the current task is "checked" or not
@@ -369,9 +382,15 @@ var Taskspin = (function(){
 			else
 			{
 				this.checkboxes().check();
-				// TO-DO: if all siblings are checked, check the parent task
-				//        if all siblings from the parent task are checked
-				//        check the parent's parent, and so on...
+				
+				// Check if the parent Tasks tasks are checked 
+				for(var currentParent = this.getParentTask(); currentParent.length > 0; currentParent = currentParent.getParentTask())
+				{
+					if(currentParent.checkboxes().areAllChecked())
+						currentParent.checkbox().check();
+					else
+						break; // Improves efficiency, because if this parent Task is not checked the one above can't be checked either
+				}
 			}
 		}
 	})(jQuery);
