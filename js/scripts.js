@@ -52,9 +52,10 @@ var Taskspin = (function(){
 		{
 			e.preventDefault();
 			e.stopPropagation();
-			console.log($task.parent().children().length);
-			if (($task.parent().children().index($task) == 0 && $task.getDepth() == 0) ||
-			    ($task.parent().children().index($task) < $task.parent().children().length - 1))
+			var taskSiblingsAndSelf = $task.siblings().andSelf();
+			var taskIndex = taskSiblingsAndSelf.index($task);
+			if ((taskIndex == 0 && $task.getDepth() == 0) ||
+			    (taskIndex < taskSiblingsAndSelf.length - 1))
 				$($task.getTask(1, true)).find('input:first').focus();
 			else
 				$($task.getTask(-1, false)).find('input:first').focus();
