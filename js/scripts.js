@@ -101,7 +101,7 @@ var Taskspin = (function(){
 			$(public.insertTaskAfter($task, true)).find('input:first').focus();
 			
 			// Uncheck all parent tasks up to the root-level
-			$task.find('.checkbox').removeClass(CHECKBOX_CHECKED_CLASS);
+			$task.checkboxes().uncheck();
 			$task.uncheckAllParents();
 			
 			e.stopPropagation();
@@ -317,17 +317,30 @@ var Taskspin = (function(){
 		}
 		
 		, $.fn.isChecked = function(){
-			return this.find('.checkbox:first').hasClass(CHECKBOX_CHECKED_CLASS);
+			return this.checkbox().hasClass(CHECKBOX_CHECKED_CLASS);
 		}
 		
 		, $.fn.check = function(){
-			if(!this.isChecked()) this.addClass(CHECKBOX_CHECKED_CLASS);
-			return this; // Chaining
+			this.each(function(){
+				var $this = $(this);
+				if(!$this.isChecked()) $this.checkbox().addClass(CHECKBOX_CHECKED_CLASS);
+			});
 		}
 
 		, $.fn.uncheck = function(){
-			if(this.isChecked()) this.removeClassClass(CHECKBOX_CHECKED_CLASS);
-			return this; // Chaining
+			this.each(function(){
+				var $this = $(this);
+				if($this.isChecked()) $this.checkbox().removeClass(CHECKBOX_CHECKED_CLASS);
+			});
+		}
+		
+		, $.fn.checkbox = function(){
+			var $this = $(this); // If it is no jQuery object make sure it is!
+			return $this.hasClass(CHECKBOX_CLASS) ? this : this.find("." + CHECKBOX_CLASS + ":first");
+		}
+		
+		, $.fn.checkboxes = function(){
+			return this.find('.' + CHECKBOX_CLASS); // Chaining
 		}
 
 		, $.fn.uncheckAllParents = function(readjustLevel)
@@ -338,7 +351,7 @@ var Taskspin = (function(){
 			for (var i = 0; i < depth; i++)
 			{
 				$currentTask = $currentTask.getParentTask(false);
-				$currentTask.find('.checkbox:first').removeClass(CHECKBOX_CHECKED_CLASS);
+				$currentTask.checkbox().uncheck();
 			}
 		}
 		
@@ -348,12 +361,12 @@ var Taskspin = (function(){
 			if (this.isChecked())
 			{
 				// uncheck current Task and uncheck all child tasks too (if there are any)
-				this.find('.checkbox').removeClass(CHECKBOX_CHECKED_CLASS);
+				this.checkboxes().uncheck();
 				this.uncheckAllParents();
 			}
 			else
 			{
-				this.find('.checkbox').addClass(CHECKBOX_CHECKED_CLASS);
+				this.checkboxes().check();
 				// TO-DO: if all siblings are checked, check the parent task
 				//        if all siblings from the parent task are checked
 				//        check the parent's parent, and so on...
