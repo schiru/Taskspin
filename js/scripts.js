@@ -1,10 +1,12 @@
 var Taskspin = (function(){
+	var CHECKBOX_CLASS = "checkbox";
+	var CHECKBOX_CHECKED_CLASS = "checked";
 	var root = "#tasks";
 	var base = "#tasks ul:first";
-	var $emptyTaskWithPlaceholder = $('<li><div class="checkbox" role="checkbox" aria-checked="false"></div><input type="text" value="" placeholder="Start typing your first Task here" /></li>');
+	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" placeholder="Start typing your first Task here" /></li>');
 
-	var $dummy = $('<li><div class="checkbox" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li>');
-	var $dummyUL = $('<ul><li><div class="checkbox" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li></ul>');
+	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li>');
+	var $dummyUL = $('<ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li></ul>');
 		
 	var init = function(){
 		// If a localStorage-object with the name "TASKSPIN_SAVE" exists...
@@ -98,7 +100,7 @@ var Taskspin = (function(){
 			$(public.insertTaskAfter($task, true)).find('input:first').focus();
 			
 			// Uncheck all parent tasks up to the root-level
-			$task.find('.checkbox').removeClass('checked');
+			$task.find('.checkbox').removeClass(CHECKBOX_CHECKED_CLASS);
 			public.uncheckAllParents($task);
 			
 			e.stopPropagation();
@@ -304,22 +306,22 @@ var Taskspin = (function(){
 			for (var i = 0; i < depth; i++)
 			{
 				$currentTask = public.getParentTask($currentTask, false);
-				$currentTask.find('.checkbox:first').removeClass('checked');
+				$currentTask.find('.checkbox:first').removeClass(CHECKBOX_CHECKED_CLASS);
 			}
 		}
 		
 		, toggleCheckboxes : function($task)
 		{
 			// Tests whether the current task is "checked" or not
-			if ($task.find('.checkbox:first').hasClass('checked'))
+			if ($task.find('.checkbox:first').hasClass(CHECKBOX_CHECKED_CLASS))
 			{
 				// uncheck current Task and uncheck all child tasks too (if there are any)
-				$task.find('.checkbox').removeClass('checked');
+				$task.find('.checkbox').removeClass(CHECKBOX_CHECKED_CLASS);
 				public.uncheckAllParents($task);
 			}
 			else
 			{
-				$task.find('.checkbox').addClass('checked');
+				$task.find('.checkbox').addClass(CHECKBOX_CHECKED_CLASS);
 				// TO-DO: if all siblings are checked, check the parent task
 				//        if all siblings from the parent task are checked
 				//        check the parent's parent, and so on...
