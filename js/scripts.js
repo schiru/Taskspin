@@ -6,6 +6,7 @@ var Taskspin = (function(){
 	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" placeholder="Start typing your first Task here" /></li>');
 	var knownTasklists = JSON.parse(localStorage.getItem('TASKSPIN_KNOWN_TASKLISTS'));
 	var currentTasklistName = "Default";
+	var currentFocusedTask;
 
 	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li>');
 	var $dummyUL = $('<ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li></ul>');
@@ -30,7 +31,9 @@ var Taskspin = (function(){
 		
 		$(root).on('keyup', 'input', processKeyUp);
 		$(root).on('keydown', 'input', processKeyDown);
+		$(root).on('focus', 'input', processFocus);		
 		$(root).on('click', '.' + CHECKBOX_CLASS, processClickOnCheckbox);
+		$(document).keydown(processDocumentKeyDown);
 		
 		// Custom event handler
 		$(root).on('treechange', save);
@@ -38,14 +41,8 @@ var Taskspin = (function(){
 		return public;
 	};
 	
-	var processClickOnCheckbox = function(e)
-	{
-		$(e.target).parent().toggleCheckboxes();
-		$(root).trigger('treechange');
-	}
-	
-	var processKeyDown = function(e){
-		var $task = $(this).parent();
+	var processDocumentKeyDown = function(e){
+		document.documentElement.focus();
 		
 		if(e.metaKey && e.keyCode == 79) // CMD+O
 		{
@@ -85,6 +82,23 @@ var Taskspin = (function(){
 				alert('This list already exists, try an other name.');
 			}
 		}
+	}
+	
+	var processClickOnCheckbox = function(e)
+	{
+		$(e.target).parent().toggleCheckboxes();
+		$(currentFocusedTask).find('input:first').focus();
+		$(root).trigger('treechange');
+	}
+	
+	var processFocus = function(e)
+	{
+		currentFocusedTask = $(this).parent();
+		e.stopPropagation();
+	}
+	
+	var processKeyDown = function(e){
+		var $task = $(this).parent();
 		
 		// CMD+Return or ESC+Empty Task
 		if (( e.keyCode == 8  && e.metaKey ) ||
@@ -435,7 +449,7 @@ var Taskspin = (function(){
 			return true;
 		}
 		
-		, $.fn.setParentsCheckedIfAllChildrensAreChecked = function(){
+		, $.fn.setParentsCheckedIfAllChildrenAreChecked = function(){
 			for(var currentParent = this.getParentTask(); currentParent.length > 0; currentParent = currentParent.getParentTask())
 			{
 				if(currentParent.checkboxes().areAllChecked())
@@ -457,9 +471,7 @@ var Taskspin = (function(){
 			else
 			{
 				this.checkboxes().check();
-				this.setParentsCheckedIfAllChildrensAreChecked();
-				// Check if the parents Task tasks are checked 
-				
+				this.setParentsCheckedIfAllChildrenAreChecked();
 			}
 		}
 	})(jQuery);
