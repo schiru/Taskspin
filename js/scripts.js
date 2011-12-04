@@ -4,8 +4,6 @@ var Taskspin = (function(){
 	var root = "#tasks";
 	var base = "#tasks ul:first";
 	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" placeholder="Start typing your first Task here" /></li>');
-	var knownTasklists = JSON.parse(localStorage.getItem('TASKSPIN_KNOWN_TASKLISTS'));
-	var currentTasklistName = "Default";
 	var currentFocusedTask;
 
 	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li>');
@@ -13,10 +11,10 @@ var Taskspin = (function(){
 		
 	var init = function(){
 		// If a localStorage-object with the name "TASKSPIN_SAVE" exists...
-		if(localStorage.getItem('TASKSPIN_SAVE_' + currentTasklistName))
+		if(localStorage.getItem('TASKSPIN_SAVE'))
 		{
 			// ... parse the JSON-string
-			var jsonObjFromLocalStorage = JSON.parse(localStorage.getItem('TASKSPIN_SAVE_' + currentTasklistName));
+			var jsonObjFromLocalStorage = JSON.parse(localStorage.getItem('TASKSPIN_SAVE'));
 			// If the JSON-string contains at least one element, parse and display it.
 			if (jsonObjFromLocalStorage.length > 0) public.setJSON(jsonObjFromLocalStorage);
 			// Otherwise place an empty task with a placeholder on the root level
@@ -26,8 +24,6 @@ var Taskspin = (function(){
 		{
 			$(base).append($emptyTaskWithPlaceholder.clone());
 		}
-				
-		setWindowTitle(currentTasklistName);
 		
 		$(root).on('keyup', 'input', processKeyUp);
 		$(root).on('keydown', 'input', processKeyDown);
@@ -42,46 +38,7 @@ var Taskspin = (function(){
 	};
 	
 	var processDocumentKeyDown = function(e){
-		document.documentElement.focus();
 		
-		if(e.metaKey && e.keyCode == 79) // CMD+O
-		{
-			e.preventDefault();
-			if(!knownTasklists) knownTasklists = [];
-			var answer = prompt("Choose from one of these known Tasklists:\n" + knownTasklists.join(', '));
-			var answer = answer ? answer.trim() : ""; // Answer could be null
-			if(answer == "") return;
-			if(jQuery.inArray(answer, knownTasklists) == -1)
-				alert('Please try again');
-			else
-			{
-				var list = localStorage.getItem('TASKSPIN_SAVE_' + answer);
-				if(list)
-				{
-					currentTasklistName = answer;
-					public.setJSON(JSON.parse(list));
-					setWindowTitle(currentTasklistName);
-				}
-			}
-		}
-		
-		if(e.metaKey && e.keyCode == 83) // CMD+S
-		{
-			e.preventDefault();
-			if(!knownTasklists) knownTasklists = [];
-			var answer = prompt("You are about to create a new EMPTY tasklist. Your current Tasklist was saved at the name '"+ currentTasklistName +"'.\n\nEnter a name for your new List:");
-			if(jQuery.inArray(answer, knownTasklists) == -1)
-			{
-				currentTasklistName = answer;
-				$(base).remove('*');
-				$(root).append($dummyUL.clone());
-				public.focusFirstTask();
-			}	
-			else
-			{
-				alert('This list already exists, try an other name.');
-			}
-		}
 	}
 	
 	var processClickOnCheckbox = function(e)
@@ -131,8 +88,9 @@ var Taskspin = (function(){
 				$(base).append($_emptyTaskWithPlaceholder);
 				$_emptyTaskWithPlaceholder.find('input:first').focus();
 			}
+			
 			if (taskDepth > 0)
-				$tasksParent.find('li:first').setParentsCheckedIfAllChildrensAreChecked();
+				$tasksParent.find('li:first').setParentsCheckedIfAllChildrenAreChecked();
 				
 			$(root).trigger('treechange');
 		}
@@ -204,18 +162,7 @@ var Taskspin = (function(){
 	
 	var save = function(evt){
 		var tree = public.getJSON();
-		tree.tasklistName = currentTasklistName;
-		
-		if(!knownTasklists)
-			knownTasklists = [];
-						
-		if(jQuery.inArray(currentTasklistName, knownTasklists) == -1)
-		{
-			knownTasklists.push(currentTasklistName);
-			localStorage.setItem('TASKSPIN_KNOWN_TASKLISTS', JSON.stringify(knownTasklists));
-		}
-		
-		localStorage.setItem('TASKSPIN_SAVE_' + currentTasklistName, JSON.stringify(tree));
+		localStorage.setItem('TASKSPIN_SAVE', JSON.stringify(tree));
 	};
 	
 	var parseJSONObject = function(obj, appendTasksTo, currentDepth){
@@ -231,7 +178,8 @@ var Taskspin = (function(){
 			
 			// Add values and check checkboxes if needed
 			$inserted.find('input:first').val(obj[i].title);
-			if(obj[i].checked) $inserted.toggleCheckboxes();
+			console.log($inserted, obj[i].checked);
+			if(obj[i].checked) $inserted.check();
 			
 			if(obj[i].childTasks)
 				parseJSONObject(obj[i].childTasks, $inserted, currentDepth);
