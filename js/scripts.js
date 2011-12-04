@@ -44,7 +44,7 @@ var Taskspin = (function(){
 	var processClickOnCheckbox = function(e)
 	{
 		$(e.target).parent().toggleCheckboxes();
-		$(currentFocusedTask).find('input:first').focus();
+		$(currentFocusedTask).focusTask();
 		$(root).trigger('treechange');
 	}
 	
@@ -57,7 +57,7 @@ var Taskspin = (function(){
 	var processKeyDown = function(e){
 		var $task = $(this).parent();
 		
-		// CMD+Return or ESC+Empty Task
+		// CMD+Backspace or ESC on Empty Task
 		if (( e.keyCode == 8  && e.metaKey ) ||
 			( e.keyCode == 27 && e.target.value.trim() == "" )) 
 		{
@@ -68,9 +68,9 @@ var Taskspin = (function(){
 			var taskDepth = $task.getDepth();
 			if ((taskIndex == 0 && taskDepth == 0) ||
 			    (taskIndex < taskSiblingsAndSelf.length - 1))
-				$($task.getTask(1, true)).find('input:first').focus();
+				$($task.getTask(1, true)).focusTask();
 			else
-				$($task.getTask(-1, false)).find('input:first').focus();
+				$($task.getTask(-1, false)).focusTask();
 				
 			var $tasksParent = $task.getParentTask();
 			
@@ -86,7 +86,7 @@ var Taskspin = (function(){
 				
 				// Append the empty Task and focus its input field
 				$(base).append($_emptyTaskWithPlaceholder);
-				$_emptyTaskWithPlaceholder.find('input:first').focus();
+				$_emptyTaskWithPlaceholder.focusTask();
 			}
 			
 			if (taskDepth > 0)
@@ -102,7 +102,7 @@ var Taskspin = (function(){
 		{
 			var direction = e.keyCode == 38 ? -1 : +1;
 			var sameLevelRequired = e.altKey ? true : false;
-			$($task.getTask(direction, sameLevelRequired)).find('input:first').focus();
+			$($task.getTask(direction, sameLevelRequired)).focusTask();
 			e.stopPropagation();
 			e.preventDefault();
 			return;
@@ -116,12 +116,12 @@ var Taskspin = (function(){
 		{
 			if($task.hasChildTask())
 			{	
-				$task.getTask(+1, false).find('input:first').focus();
+				$task.getTask(+1).insertTaskBefore().focusTask();
 				return;
 			}	
 			else if(e.target.value.trim() == '') { e. stopPropagation(); return; };
 			
-			$(public.insertTaskAfter($task, true)).find('input:first').focus();
+			$(public.insertTaskAfter($task, true)).focusTask();
 			
 			// Uncheck all parent tasks up to the root-level
 			$task.checkboxes().uncheck();
@@ -134,7 +134,7 @@ var Taskspin = (function(){
 		{
 			if(e.target.value.trim() == '') { e.stopPropagation(); return; };
 			
-			$(public.insertTaskAfter($task)).find('input:first').focus();
+			$(public.insertTaskAfter($task)).focusTask();
 			e.stopPropagation();
 			
 			// Uncheck all parent tasks up to the root-level
@@ -147,14 +147,14 @@ var Taskspin = (function(){
 		}
 		else if(e.keyCode == 13 && e.shiftKey && !e.altKey) // Return with SHIFT
 		{
-			public.insertTaskAfter($task.getParentTask()).find('input:first').focus();
+			public.insertTaskAfter($task.getParentTask()).focusTask();
 			e.stopPropagation();
 			return;
 		}
 		else if(e.keyCode == 13 && e.shiftKey && e.altKey) // Return + Shift + Alt
 		{
 			$(base).append($dummy.clone())
-			$task.getRootlevelParent().next().find('input:first').focus();
+			$task.getRootlevelParent().next().focusTask();
 		}
 		
 		$(root).trigger('treechange');
@@ -178,7 +178,6 @@ var Taskspin = (function(){
 			
 			// Add values and check checkboxes if needed
 			$inserted.find('input:first').val(obj[i].title);
-			console.log($inserted, obj[i].checked);
 			if(obj[i].checked) $inserted.check();
 			
 			if(obj[i].childTasks)
@@ -208,7 +207,7 @@ var Taskspin = (function(){
 				$new.insertAfter($task);
 			
 			// CSS Fix
-			$new.css('width', '-=' + (30*($new.getDepth())));
+			$new.fixWidth();
 			return $new;
 		}
 				
@@ -421,6 +420,20 @@ var Taskspin = (function(){
 				this.checkboxes().check();
 				this.setParentsCheckedIfAllChildrenAreChecked();
 			}
+		}
+		
+		, $.fn.insertTaskBefore = function(){
+			return $dummy.clone().insertBefore(this).fixWidth();
+		}
+		
+		, $.fn.fixWidth = function(){
+			this.css('width', '-=' + (30*(this.getDepth())));
+			return this;
+		}
+		
+		, $.fn.focusTask = function(){
+			this.find('input:first').focus();
+			return this;
 		}
 	})(jQuery);
 	
