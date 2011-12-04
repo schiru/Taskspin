@@ -1,13 +1,16 @@
 var Taskspin = (function(){
 	var CHECKBOX_CLASS = "checkbox";
 	var CHECKBOX_CHECKED_CLASS = "checked";
+	var COLLAPSE_CONTROL_CLASS = "collapseControl";
+	var COLLAPSE_CONTROL_SIGN = "➤";
+	var COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS = "collapsed";
 	var root = "#tasks";
 	var base = "#tasks ul:first";
-	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" placeholder="Start typing your first Task here" /></li>');
+	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" placeholder="Start typing your first Task here" /></li>');
 	var currentFocusedTask;
 
-	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li>');
-	var $dummyUL = $('<ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><input type="text" value="" /></li></ul>');
+	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /></li>');
+	var $dummyUL = $('<ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /></li></ul>');
 		
 	var init = function(){
 		// If a localStorage-object with the name "TASKSPIN_SAVE" exists...
@@ -57,12 +60,13 @@ var Taskspin = (function(){
 	var processKeyDown = function(e){
 		var $task = $(this).parent();
 		
+		e.stopPropagation();
+		
 		// CMD+Backspace or ESC on Empty Task
 		if (( e.keyCode == 8  && e.metaKey ) ||
 			( e.keyCode == 27 && e.target.value.trim() == "" )) 
 		{
 			e.preventDefault();
-			e.stopPropagation();
 			var taskSiblingsAndSelf = $task.siblings().andSelf();
 			var taskIndex = taskSiblingsAndSelf.index($task);
 			var taskDepth = $task.getDepth();
@@ -74,10 +78,10 @@ var Taskspin = (function(){
 				
 			var $tasksParent = $task.getParentTask();
 			
-			// If this is the last task of this level, delete the surrounding ul-tags
-			if ($task.siblings().length == 0 && $task.getDepth() != 0) $task.parent().remove();
-			// remove the current task
-			$task.remove();
+			// If this is the last task of this level, delete the surrounding ul-tag
+			if ($task.siblings().length == 0 && taskDepth != 0) $task.parent().remove();
+			else $task.remove();
+
 			// If there are no childrens on the root-level anymore, create an empty task with placeholder
 			if ($(base).children().length == 0) 
 			{
@@ -92,6 +96,8 @@ var Taskspin = (function(){
 			if (taskDepth > 0)
 				$tasksParent.find('li:first').setParentsCheckedIfAllChildrenAreChecked();
 				
+			if ($tasksParent.length > 0 && !$tasksParent.hasChildTask()) $tasksParent.hideCollapseControl();
+				
 			$(root).trigger('treechange');
 		}
 			
@@ -100,17 +106,31 @@ var Taskspin = (function(){
 
 		if(e.keyCode == 38 || e.keyCode == 40) // Up or down arrow
 		{
-			var direction = e.keyCode == 38 ? -1 : +1;
-			var sameLevelRequired = e.altKey ? true : false;
-			$($task.getTask(direction, sameLevelRequired)).focusTask();
-			e.stopPropagation();
-			e.preventDefault();
+			if (e.metaKey)
+			{
+				e.preventDefault();
+				if($task.hasChildTask())
+				{
+					if (e.keyCode == 38) $task.collapse();
+					else if (e.keyCode == 40) $task.open();
+				}
+			}
+			else
+			{
+				var direction = e.keyCode == 38 ? -1 : +1;
+				var sameLevelRequired = false; // var sameLevelRequired = e.altKey ? true : false;
+				
+				$($task.getTask(direction, sameLevelRequired)).focusTask();
+				e.preventDefault();
+			}
 			return;
 		}
 	};
 	
 	var processKeyUp = function(e){
 		var $task = $(this).parent();
+		
+		e.stopPropagation();
 
 		if(e.keyCode == 9) // Tab
 		{
@@ -118,24 +138,26 @@ var Taskspin = (function(){
 			{	
 				$task.getTask(+1).insertTaskBefore().focusTask();
 				return;
+			}
+			else
+			{
+				$task.showCollapseControl();
 			}	
-			else if(e.target.value.trim() == '') { e. stopPropagation(); return; };
 			
-			$(public.insertTaskAfter($task, true)).focusTask();
+			if(e.target.value.trim() == '') { e. stopPropagation(); return; };
+			
+			$(public.insertTaskAfter($task, true)).hideCollapseControl().focusTask();
 			
 			// Uncheck all parent tasks up to the root-level
 			$task.checkboxes().uncheck();
 			$task.uncheckAllParents();
-			
-			e.stopPropagation();
 		}
 
 		if(e.keyCode == 13 && !e.altKey && !e.shiftKey) // Return without ALT and without SHIFT
 		{
 			if(e.target.value.trim() == '') { e.stopPropagation(); return; };
 			
-			$(public.insertTaskAfter($task)).focusTask();
-			e.stopPropagation();
+			$(public.insertTaskAfter($task)).hideCollapseControl().focusTask();
 			
 			// Uncheck all parent tasks up to the root-level
 			$task.uncheckAllParents();
@@ -148,7 +170,6 @@ var Taskspin = (function(){
 		else if(e.keyCode == 13 && e.shiftKey && !e.altKey) // Return with SHIFT
 		{
 			public.insertTaskAfter($task.getParentTask()).focusTask();
-			e.stopPropagation();
 			return;
 		}
 		else if(e.keyCode == 13 && e.shiftKey && e.altKey) // Return + Shift + Alt
@@ -181,7 +202,12 @@ var Taskspin = (function(){
 			if(obj[i].checked) $inserted.check();
 			
 			if(obj[i].childTasks)
+			{
 				parseJSONObject(obj[i].childTasks, $inserted, currentDepth);
+				if(obj[i].collapsed) $inserted.collapse();
+			}
+			else
+				$inserted.hideCollapseControl();
 			
 			appendTasksTo = $inserted;
 		}
@@ -202,6 +228,7 @@ var Taskspin = (function(){
 			{
 				$task.append($new);
 				$new = $new.find('li');
+				//$new.hideCollapseControl();
 			}
 			else
 				$new.insertAfter($task);
@@ -230,7 +257,10 @@ var Taskspin = (function(){
 					};
 					
 					if($currentChild.hasChildTask())
+					{
+						output[counter].collapsed = $currentChild.isCollapsed();
 						output[counter].childTasks = this.getJSON($currentChild.children('ul'), depth+1);
+					}
 
 					counter++;
 				}
@@ -289,7 +319,7 @@ var Taskspin = (function(){
 			if(getLast)
 			{
 				var $test = this.children('ul').children('li:last');
-				if($test.hasChildTask())
+				if($test.hasChildTask() && !$test.isCollapsed())
 					return $test.getChildTask(true);
 				else
 					return $test;
@@ -303,7 +333,7 @@ var Taskspin = (function(){
 		
 			// Try to get tasks by the order they are visible, no matter if they
 			// are in the same level
-			if(sameLevelRequired == false && relativeLocation > 0 && this.hasChildTask())
+			if(sameLevelRequired == false && relativeLocation > 0 && this.hasChildTask() && !this.isCollapsed())
 			{
 				return this.getChildTask();
 			}
@@ -318,7 +348,10 @@ var Taskspin = (function(){
 			// -> return the childtask of the previous one
 			if(sameLevelRequired == false && relativeLocation < 0 && absoluteLocation >= 0 && $siblings.eq(absoluteLocation).hasChildTask())
 			{
-				return $siblings.eq(absoluteLocation).getChildTask(true);
+				if($siblings.eq(absoluteLocation).isCollapsed())
+					return $siblings.eq(absoluteLocation);
+				else
+					return $siblings.eq(absoluteLocation).getChildTask(true);
 			}
 			
 			// If absoluteLocation < 0 get Task of higher level
@@ -427,13 +460,36 @@ var Taskspin = (function(){
 		}
 		
 		, $.fn.fixWidth = function(){
-			this.css('width', '-=' + (30*(this.getDepth())));
+			this.css('width', parseInt($('#tasks li').css('width')) - (30*(this.getDepth())));
+			if (this.find('.collapseControl').length == 0) this.css('width', '+=16px');
 			return this;
 		}
 		
 		, $.fn.focusTask = function(){
 			this.find('input:first').focus();
 			return this;
+		}
+		
+		, $.fn.showCollapseControl = function(){
+			this.find('.collapseControlHidden:first').addClass('collapseControl').removeClass('collapseControlHidden').show();
+			return this.fixWidth();
+		}
+		
+		, $.fn.hideCollapseControl = function(){
+			this.find('.collapseControl:first').addClass('collapseControlHidden').removeClass('collapseControl').hide();
+			return this.fixWidth();
+		}
+		
+		, $.fn.isCollapsed = function(){
+			return this.children('div').filter('.' + COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS + ':first').length;
+		}
+		
+		, $.fn.collapse = function(){
+			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').addClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').hide();
+		}
+		
+		, $.fn.open = function(){
+			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').removeClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').show();
 		}
 	})(jQuery);
 	
