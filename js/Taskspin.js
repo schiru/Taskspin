@@ -111,9 +111,26 @@ var Taskspin = (function(){
 				e.preventDefault();
 				if($task.hasChildTask())
 				{
+					// If the task is expanded and CMD+Down is pressed 
+					// Jump to the last child
+					if(!$task.isCollapsed() && e.keyCode == 40)
+					{
+						$task.getChildTask(true).focusTask();
+						return;
+					}
+					
+					// If the task is collapsed and CMD+Up is pressed
+					// Jump to the parent task
+					else if($task.isCollapsed() && e.keyCode == 38)
+					{
+						$($task.getParentTask()).focusTask();
+					}
+					
 					if (e.keyCode == 38) $task.collapse();
-					else if (e.keyCode == 40) $task.open();
+					else if (e.keyCode == 40) $task.expand();
 				}
+				else
+					$($task.getParentTask()).focusTask();
 			}
 			else
 			{
@@ -488,7 +505,7 @@ var Taskspin = (function(){
 			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').addClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').hide();
 		}
 		
-		, $.fn.open = function(){
+		, $.fn.expand = function(){
 			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').removeClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').show();
 		}
 	})(jQuery);
