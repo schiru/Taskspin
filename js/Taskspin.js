@@ -13,6 +13,7 @@ var Taskspin = (function(){
 	var $dummyUL = $('<ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /></li></ul>');
 		
 	var init = function(){
+		
 		// If a localStorage-object with the name "TASKSPIN_SAVE" exists...
 		if(localStorage.getItem('TASKSPIN_SAVE'))
 		{
@@ -21,11 +22,13 @@ var Taskspin = (function(){
 			// If the JSON-string contains at least one element, parse and display it.
 			if (jsonObjFromLocalStorage.length > 0){
 				$(root).css({marginLeft: "-10000px"});
+				console.log('bef');
 				public.setJSON(jsonObjFromLocalStorage);
+				console.log('af');
 				setTimeout(function(){ $(root).hide().css({marginLeft:'0'}).fadeIn();}, 200);
 			}
 			// Otherwise place an empty task with a placeholder on the root level
-			else $(base).append($emptyTaskWithPlaceholder.clone());
+			else $(base).append($emptyTaskWithPlaceholder.clone().hideCollapseControl());
 		}
 		else
 		{
@@ -41,13 +44,13 @@ var Taskspin = (function(){
 		
 		// Custom event handler
 		$(root).on('treechange', save);
-			
+		
 		return public;
 	};
 	
 	var processDocumentKeyDown = function(e){
 		
-	}
+	}	
 	
 	var processClickOnCollapseControl = function(e)
 	{
@@ -184,6 +187,7 @@ var Taskspin = (function(){
 
 		if(e.keyCode == 13 && !e.altKey && !e.shiftKey) // Return without ALT and without SHIFT
 		{
+			console.log("enter");
 			if(e.target.value.trim() == '') { e.stopPropagation(); return; };
 			
 			$(public.insertTaskAfter($task)).hideCollapseControl().focusTask();
@@ -302,7 +306,7 @@ var Taskspin = (function(){
 		, setJSON : function(JSONObj){
 			$(base).remove('*');	
 			parseJSONObject(JSONObj);
-			public.focusFirstTask();
+			setTimeout(public.focusFirstTask, 200);
 			$(root).trigger('treechange');		
 		}
 		
@@ -489,7 +493,7 @@ var Taskspin = (function(){
 		}
 		
 		, $.fn.fixWidth = function(){
-			this.css('width', parseInt($('#tasks li').css('width')) - (30*(this.getDepth())));
+			this.css('width', parseInt($('#tasks').css('width')) - (30*(this.getDepth())));
 			if (this.find('.collapseControl').length == 0) this.css('width', '+=16px');
 			return this;
 		}
