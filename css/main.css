@@ -59,6 +59,7 @@ h1#title{
 	margin-top:8px;
 	height: auto;
 	width: auto;
+	cursor: default;
 	-moz-transform: rotate(90deg);
 	-webkit-transform: rotate(90deg);
 	-o-transform: rotate(90deg);
@@ -67,6 +68,15 @@ h1#title{
 	-webkit-transition: -webkit-transform .5s; 
 	-o-transition: -o-transform .5s; 
 	-moz-transition: -moz-transform .5s; 
+}
+
+.collapseControl:hover{
+	text-shadow: 0 0 5px #1186D4;
+}
+
+.collapseControl:active{
+	text-shadow: 0 0 5px #1186D4;
+	color: #1186D4;
 }
 
 .collapsed {

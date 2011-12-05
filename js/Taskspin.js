@@ -19,7 +19,11 @@ var Taskspin = (function(){
 			// ... parse the JSON-string
 			var jsonObjFromLocalStorage = JSON.parse(localStorage.getItem('TASKSPIN_SAVE'));
 			// If the JSON-string contains at least one element, parse and display it.
-			if (jsonObjFromLocalStorage.length > 0) public.setJSON(jsonObjFromLocalStorage);
+			if (jsonObjFromLocalStorage.length > 0){
+				$(root).css({marginLeft: "-10000px"});
+				public.setJSON(jsonObjFromLocalStorage);
+				setTimeout(function(){ $(root).hide().css({marginLeft:'0'}).fadeIn();}, 200);
+			}
 			// Otherwise place an empty task with a placeholder on the root level
 			else $(base).append($emptyTaskWithPlaceholder.clone());
 		}
@@ -32,6 +36,7 @@ var Taskspin = (function(){
 		$(root).on('keydown', 'input', processKeyDown);
 		$(root).on('focus', 'input', processFocus);		
 		$(root).on('click', '.' + CHECKBOX_CLASS, processClickOnCheckbox);
+		$(root).on('click', '.' + COLLAPSE_CONTROL_CLASS, processClickOnCollapseControl);
 		$(document).keydown(processDocumentKeyDown);
 		
 		// Custom event handler
@@ -42,6 +47,13 @@ var Taskspin = (function(){
 	
 	var processDocumentKeyDown = function(e){
 		
+	}
+	
+	var processClickOnCollapseControl = function(e)
+	{
+		$(e.target).parent().toggleCollapse();
+		$(currentFocusedTask).focusTask();
+		$(root).trigger('treechange');
 	}
 	
 	var processClickOnCheckbox = function(e)
@@ -80,7 +92,7 @@ var Taskspin = (function(){
 			
 			// If this is the last task of this level, delete the surrounding ul-tag
 			if ($task.siblings().length == 0 && taskDepth != 0) $task.parent().remove();
-			else $task.remove();
+			else $task.fadeOut('fast', function(){ $(this).remove(); });
 
 			// If there are no childrens on the root-level anymore, create an empty task with placeholder
 			if ($(base).children().length == 0) 
@@ -124,12 +136,13 @@ var Taskspin = (function(){
 					else if($task.isCollapsed() && e.keyCode == 38)
 					{
 						$($task.getParentTask()).focusTask();
+						return;
 					}
 					
 					if (e.keyCode == 38) $task.collapse();
 					else if (e.keyCode == 40) $task.expand();
 				}
-				else
+				else if(e.keyCode == 38)
 					$($task.getParentTask()).focusTask();
 			}
 			else
@@ -473,7 +486,7 @@ var Taskspin = (function(){
 		}
 		
 		, $.fn.insertTaskBefore = function(){
-			return $dummy.clone().insertBefore(this).fixWidth();
+			return $dummy.clone().insertBefore(this).fixWidth().hideCollapseControl();
 		}
 		
 		, $.fn.fixWidth = function(){
@@ -497,16 +510,23 @@ var Taskspin = (function(){
 			return this.fixWidth();
 		}
 		
+		, $.fn.toggleCollapse = function(){
+			if(this.isCollapsed())
+				this.expand();
+			else
+				this.collapse();
+		}
+		
 		, $.fn.isCollapsed = function(){
 			return this.children('div').filter('.' + COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS + ':first').length;
 		}
 		
 		, $.fn.collapse = function(){
-			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').addClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').hide();
+			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').addClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').fadeTo(150 , 0).slideUp(150);
 		}
 		
 		, $.fn.expand = function(){
-			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').removeClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').show();
+			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').removeClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').slideDown(150).fadeTo(150, 1);
 		}
 	})(jQuery);
 	
