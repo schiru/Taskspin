@@ -22,9 +22,7 @@ var Taskspin = (function(){
 			// If the JSON-string contains at least one element, parse and display it.
 			if (jsonObjFromLocalStorage.length > 0){
 				$(root).css({marginLeft: "-10000px"});
-				console.log('bef');
 				public.setJSON(jsonObjFromLocalStorage);
-				console.log('af');
 				setTimeout(function(){ $(root).hide().css({marginLeft:'0'}).fadeIn();}, 200);
 			}
 			// Otherwise place an empty task with a placeholder on the root level
@@ -69,6 +67,7 @@ var Taskspin = (function(){
 	var processFocus = function(e)
 	{
 		currentFocusedTask = $(this).parent();
+		$(root).trigger('treechange');
 		e.stopPropagation();
 	}
 	
@@ -101,7 +100,7 @@ var Taskspin = (function(){
 			if ($(base).children().length == 0) 
 			{
 				// Create a clone instance of an empty Task with placeholder
-				var $_emptyTaskWithPlaceholder = $emptyTaskWithPlaceholder.clone();
+				var $_emptyTaskWithPlaceholder = $emptyTaskWithPlaceholder.clone().hideCollapseControl();
 				
 				// Append the empty Task and focus its input field
 				$(base).append($_emptyTaskWithPlaceholder);
@@ -121,6 +120,7 @@ var Taskspin = (function(){
 
 		if(e.keyCode == 38 || e.keyCode == 40) // Up or down arrow
 		{
+			if(e.altKey) return;
 			if (e.metaKey)
 			{
 				e.preventDefault();
@@ -158,6 +158,7 @@ var Taskspin = (function(){
 			}
 			return;
 		}
+		
 	};
 	
 	var processKeyUp = function(e){
@@ -169,6 +170,8 @@ var Taskspin = (function(){
 		{
 			if($task.hasChildTask())
 			{	
+				if($task.isCollapsed())
+					$task.expand();
 				$task.getTask(+1).insertTaskBefore().focusTask();
 				return;
 			}
@@ -187,7 +190,6 @@ var Taskspin = (function(){
 
 		if(e.keyCode == 13 && !e.altKey && !e.shiftKey) // Return without ALT and without SHIFT
 		{
-			console.log("enter");
 			if(e.target.value.trim() == '') { e.stopPropagation(); return; };
 			
 			$(public.insertTaskAfter($task)).hideCollapseControl().focusTask();
@@ -209,6 +211,21 @@ var Taskspin = (function(){
 		{
 			$(base).append($dummy.clone())
 			$task.getRootlevelParent().next().focusTask();
+		}
+		
+		if((e.keyCode == 38 || e.keyCode == 40) && e.altKey)
+		{
+			var direction = e.keyCode == 38 ? -1 : +1;
+			var $otherTask = $task.getTask(direction, true);
+			if($otherTask[0] == $task[0]) return;
+			if(direction < 0)
+			{
+				$task.insertBefore($otherTask).focusTask();
+			}
+			else
+			{
+				$task.insertAfter($otherTask).focusTask();
+			}
 		}
 		
 		$(root).trigger('treechange');
@@ -233,6 +250,7 @@ var Taskspin = (function(){
 			// Add values and check checkboxes if needed
 			$inserted.find('input:first').val(obj[i].title);
 			if(obj[i].checked) $inserted.check();
+			if(obj[i].focus) $inserted.focusTask();
 			
 			if(obj[i].childTasks)
 			{
@@ -284,10 +302,14 @@ var Taskspin = (function(){
 				if(inputVal != "")
 				{
 					output[counter] = {
-						"title": $currentChild.find('input:first').val()
+						"title": $currentChild.find('input:first').val().trim()
 						, "checked": $currentChild.isChecked()
 						, "depth": depth
 					};
+					
+					console.log($currentChild[0] == currentFocusedTask[0], currentFocusedTask);
+					if($currentChild[0] == currentFocusedTask[0])
+						output[counter].focus = true;
 					
 					if($currentChild.hasChildTask())
 					{
@@ -306,7 +328,7 @@ var Taskspin = (function(){
 		, setJSON : function(JSONObj){
 			$(base).remove('*');	
 			parseJSONObject(JSONObj);
-			setTimeout(public.focusFirstTask, 200);
+			//setTimeout(public.focusFirstTask, 200);
 			$(root).trigger('treechange');		
 		}
 		
@@ -397,9 +419,17 @@ var Taskspin = (function(){
 			else if(!sameLevelRequired && absoluteLocation >= $siblings.length)
 				return this.getParentTask(true);
 			else if(sameLevelRequired && absoluteLocation >= $siblings.length)
+				absoluteLocation = $siblings.length - 1;
+			else if(absoluteLocation < 0)
 				absoluteLocation = 0;
 			
 			return $siblings.eq(absoluteLocation);
+		}
+		
+		, $.fn.getAbsolutePositionOnCurrentLevel = function(){
+			var $siblings = this.parent().children();
+			var currentLocation = $siblings.index(this);
+			return currentLocation + relativeLocation;
 		}
 		
 		, $.fn.getRootlevelParent = function()
@@ -526,10 +556,12 @@ var Taskspin = (function(){
 		
 		, $.fn.collapse = function(){
 			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').addClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').fadeTo(150 , 0).slideUp(150);
+			$(root).trigger('treechange');
 		}
 		
 		, $.fn.expand = function(){
 			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').removeClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').slideDown(150).fadeTo(150, 1);
+			$(root).trigger('treechange');
 		}
 	})(jQuery);
 	
