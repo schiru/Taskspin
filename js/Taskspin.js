@@ -92,7 +92,7 @@ var Taskspin = (function(){
 			
 			// If this is the last task of this level, delete the surrounding ul-tag
 			if ($task.siblings().length == 0 && taskDepth != 0) $task.parent().remove();
-			else $task.fadeOut('fast', function(){ $(this).remove(); });
+			else $task.remove();
 
 			// If there are no childrens on the root-level anymore, create an empty task with placeholder
 			if ($(base).children().length == 0) 
@@ -169,14 +169,13 @@ var Taskspin = (function(){
 				$task.getTask(+1).insertTaskBefore().focusTask();
 				return;
 			}
+			
+			if(e.target.value.trim() == '') { e. stopPropagation(); return; }
 			else
 			{
 				$task.showCollapseControl();
+				$(public.insertTaskAfter($task, true)).hideCollapseControl().focusTask();
 			}	
-			
-			if(e.target.value.trim() == '') { e. stopPropagation(); return; };
-			
-			$(public.insertTaskAfter($task, true)).hideCollapseControl().focusTask();
 			
 			// Uncheck all parent tasks up to the root-level
 			$task.checkboxes().uncheck();
@@ -308,7 +307,7 @@ var Taskspin = (function(){
 		}
 		
 		, focusFirstTask : function(){
-			$(base).find('li:first input:first').focus();
+			return $(root).find('li:first input:first').focus();
 		}
 		
 	};
