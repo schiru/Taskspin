@@ -38,6 +38,7 @@ var Taskspin = (function(){
 		$(root).on('focus', 'input', processFocus);		
 		$(root).on('click', '.' + CHECKBOX_CLASS, processClickOnCheckbox);
 		$(root).on('click', '.' + COLLAPSE_CONTROL_CLASS, processClickOnCollapseControl);
+		$(root).on('change', 'input.dueDate', save);
 		$(document).keydown(processDocumentKeyDown);
 		
 		// Custom event handler
@@ -252,7 +253,7 @@ var Taskspin = (function(){
 			currentDepth = obj[i].depth;
 							
 			// Insert Task
-			var $inserted = public.insertTaskAfter(appendTasksTo, increaseDepth);
+			var $inserted = public.insertTaskAfter(appendTasksTo, increaseDepth).setDueDate(obj[i].dueDate);
 			
 			// Add values and check checkboxes if needed
 			$inserted.find('input:first').val(obj[i].title);
@@ -313,6 +314,7 @@ var Taskspin = (function(){
 						"title": $currentChild.find('input:first').val().trim()
 						, "checked": $currentChild.isChecked()
 						, "depth": depth
+						, "dueDate": $currentChild.dueDate()
 					};
 					
 					if($currentChild[0] == currentFocusedTask[0])
@@ -555,6 +557,7 @@ var Taskspin = (function(){
 				this.expand();
 			else
 				this.collapse();
+			return this;
 		}
 		
 		, $.fn.isCollapsed = function(){
@@ -564,11 +567,24 @@ var Taskspin = (function(){
 		, $.fn.collapse = function(){
 			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').addClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').fadeTo(250 , 0).slideUp(250);
 			$(root).trigger('treechange');
+			return this;
 		}
 		
 		, $.fn.expand = function(){
 			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').removeClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').slideDown(250).fadeTo(250, 1);
 			$(root).trigger('treechange');
+			return this;
+		}
+		
+		, $.fn.dueDate = function()
+		{
+			return this.find('input.dueDate').val().trim();
+		}
+		
+		, $.fn.setDueDate = function(value)
+		{
+			this.find('input.dueDate').val(value);
+			return this;
 		}
 	})(jQuery);
 	
