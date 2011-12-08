@@ -10,7 +10,7 @@ var Taskspin = (function(){
 	var currentFocusedTask;
 
 	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /><input type="text" class="dueDate" placeholder="No due date" /></li>');
-	var $dummyUL = $('<div style="clear:both;"></div><ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /><input type="text" class="dueDate" placeholder="No due date" /></li><div style="clear:both"></div></ul>');
+	var $dummyUL = $('<ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /><input type="text" class="dueDate" placeholder="No due date" /></li></ul>');
 		
 	var init = function(){
 		

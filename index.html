@@ -24,13 +24,15 @@
 		<script src="js/jquery-ui-1.8.16.custom.min.js"></script>
 		<script src="js/Taskspin.js"></script>
 		<script>
-			$(".dueDate").datepicker({
-				dateFormat: 'dd.mm.yy',
-				showAnim: 'blind',
-				showButtonPanel: true,
-				numberOfMonths: 2,
-				showOtherMonths: true,
-				selectOtherMonths: true
+			$("#tasks").on('mousedown', '.dueDate', function(){
+				$(this).datepicker({
+					dateFormat: 'dd.mm.yy',
+					showAnim: 'blind',
+					showButtonPanel: true,
+					numberOfMonths: 2,
+					showOtherMonths: true,
+					selectOtherMonths: true
+				}).focus();
 			});
 		</script>
 	</body>
