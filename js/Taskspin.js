@@ -196,32 +196,30 @@ var Taskspin = (function(){
 			$task.checkboxes().uncheck();
 			$task.uncheckAllParents();
 		}
-
-		if(e.keyCode == 13 && !e.altKey && !e.shiftKey) // Return without ALT and without SHIFT
-		{
-			if(e.target.value.trim() == '') { e.stopPropagation(); return; };
-			
-			$(public.insertTaskAfter($task)).hideCollapseControl().focusTask();
-			
-			// Uncheck all parent tasks up to the root-level
-			$task.uncheckAllParents();
-		}
-		else if(e.keyCode == 13 && e.altKey && !e.shiftKey) // Return with ALT and without SHIFT
-		{
-			$task.toggleCheckboxes();
-			return;
-		}
-		else if(e.keyCode == 13 && e.shiftKey && !e.altKey) // Return with SHIFT
-		{
-			public.insertTaskAfter($task.getParentTask()).focusTask();
-			return;
-		}
-		else if(e.keyCode == 13 && e.shiftKey && e.altKey) // Return + Shift + Alt
-		{
-			$(base).append($dummy.clone())
-			$task.getRootlevelParent().next().focusTask();
-		}
 		
+		if (e.keyCode == 13) // Return
+		{
+			if (e.shiftKey && e.altKey)
+			{
+				$(public.insertTaskAfter($(base).find('li:last'))).hideCollapseControl().focusTask();
+			}
+			else if (e.shiftKey)
+			{
+				$(public.insertTaskAfter($task.getParentTask())).hideCollapseControl().focusTask();
+			}
+			else if (e.altKey)
+			{
+				$task.toggleCheckboxes();
+			}
+			else
+			{
+				if(e.target.value.trim() == '') { e.stopPropagation(); return; };
+				$(public.insertTaskAfter($task)).hideCollapseControl().focusTask();
+				$task.uncheckAllParents();
+			}
+			return;
+		}
+ 		
 		if((e.keyCode == 38 || e.keyCode == 40) && e.altKey)
 		{
 			var direction = e.keyCode == 38 ? -1 : +1;
