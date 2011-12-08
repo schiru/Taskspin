@@ -6,11 +6,11 @@ var Taskspin = (function(){
 	var COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS = "collapsed";
 	var root = "#tasks";
 	var base = "#tasks ul:first";
-	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" placeholder="Start typing your first Task here" /></li>');
+	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" placeholder="Start typing your first Task here" /><input type="text" class="dueDate" placeholder="No due date" /></li>');
 	var currentFocusedTask;
 
-	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /></li>');
-	var $dummyUL = $('<ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /></li></ul>');
+	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /><input type="text" class="dueDate" placeholder="No due date" /></li>');
+	var $dummyUL = $('<div style="clear:both;"></div><ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /><input type="text" class="dueDate" placeholder="No due date" /></li><div style="clear:both"></div></ul>');
 		
 	var init = function(){
 		
@@ -23,7 +23,7 @@ var Taskspin = (function(){
 			if (jsonObjFromLocalStorage.length > 0){
 				$(root).css({marginLeft: "-10000px"});
 				public.setJSON(jsonObjFromLocalStorage);
-				setTimeout(function(){ $(root).hide().css({marginLeft:'0'}).fadeIn();}, 200);
+				setTimeout(function(){ $(root).hide().css({marginLeft:'0'}).fadeIn();}, 300);
 			}
 			// Otherwise place an empty task with a placeholder on the root level
 			else $(base).append($emptyTaskWithPlaceholder.clone().hideCollapseControl());
@@ -75,6 +75,13 @@ var Taskspin = (function(){
 		var $task = $(this).parent();
 		
 		e.stopPropagation();
+		
+		
+		if(e.keyCode == 68 && e.metaKey)
+		{
+			
+			e.preventDefault();
+		}
 		
 		// CMD+Backspace or ESC on Empty Task
 		if (( e.keyCode == 8  && e.metaKey ) ||
@@ -250,7 +257,7 @@ var Taskspin = (function(){
 			// Add values and check checkboxes if needed
 			$inserted.find('input:first').val(obj[i].title);
 			if(obj[i].checked) $inserted.check();
-			if(obj[i].focus) $inserted.focusTask();
+			if(obj[i].focus) currentFocusedTask = $inserted.focusTask();
 			
 			if(obj[i].childTasks)
 			{
@@ -293,7 +300,8 @@ var Taskspin = (function(){
 			$tasks = $tasks ? $tasks : $(base);
 			depth = depth ? depth : 0;
 			var output = {};
-			var $children = $tasks.children();
+			var $children = $tasks.children('li');
+			
 			for(var i = 0, counter = 0; i < $children.length; i++)
 			{
 				$currentChild = $children.eq(i);
@@ -307,7 +315,6 @@ var Taskspin = (function(){
 						, "depth": depth
 					};
 					
-					console.log($currentChild[0] == currentFocusedTask[0], currentFocusedTask);
 					if($currentChild[0] == currentFocusedTask[0])
 						output[counter].focus = true;
 					
@@ -393,7 +400,7 @@ var Taskspin = (function(){
 				return this.getChildTask();
 			}
 			
-			var $siblings = this.parent().children();
+			var $siblings = this.parent().children('li');
 			
 			// In current level
 			var currentLocation = $siblings.index(this);
@@ -555,12 +562,12 @@ var Taskspin = (function(){
 		}
 		
 		, $.fn.collapse = function(){
-			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').addClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').fadeTo(150 , 0).slideUp(150);
+			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').addClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').fadeTo(250 , 0).slideUp(250);
 			$(root).trigger('treechange');
 		}
 		
 		, $.fn.expand = function(){
-			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').removeClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').slideDown(150).fadeTo(150, 1);
+			this.find('.' + COLLAPSE_CONTROL_CLASS + ':first').removeClass(COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS).end().find('ul:first').slideDown(250).fadeTo(250, 1);
 			$(root).trigger('treechange');
 		}
 	})(jQuery);

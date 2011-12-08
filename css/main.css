@@ -87,7 +87,6 @@ h1#title{
 	transform: rotate(0deg);
 }
 
-
 .collapseControl + input {
 	padding-left: 40px;
 }
@@ -118,6 +117,7 @@ li input{
 	background-color:#EEE;
 	border:1px solid #CCC;
 	border-bottom:2px solid #999;
+	float:left;
 }
 
 li input:focus{
@@ -154,6 +154,7 @@ ul li{
 	margin-left: 30px;
 	list-style-type: none;
 	padding: 0px;
+	clear:left;
 }
 
 body#debug ul{
@@ -163,3 +164,23 @@ body#debug ul{
 body#debug li{
 	border: 1px solid #333;
 }
+
+input.dueDate{
+	border: none;
+	outline: none;
+	font-size:16px;
+	padding: 5px 5px 5px;
+	display:block;
+	width:90px;
+	text-align:center;
+	background-color:#EEE;
+	border:1px solid #CCC;
+	border-bottom:2px solid #999;
+	margin-right:-150px;
+}
+
+input.dueDate:focus{
+	border-bottom-color: #E01B4C;
+	background-color: #DDD;
+}
+

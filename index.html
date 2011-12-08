@@ -5,6 +5,12 @@
 		<title>Taskspin.</title>
 		<link rel="icon" href="favicon.png" type="image/png" />
 		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="css/flick/jquery-ui-1.8.16.custom.css">
+		<style>
+			.ui-datepicker{ 
+				font-size:11px; 
+			}
+		</style>
 	</head>
 	<body>
 		<header>
@@ -15,6 +21,17 @@
 			</ul>
 		</div>
 		<script src="js/jQuery.js"></script>
+		<script src="js/jquery-ui-1.8.16.custom.min.js"></script>
 		<script src="js/Taskspin.js"></script>
+		<script>
+			$(".dueDate").datepicker({
+				dateFormat: 'dd.mm.yy',
+				showAnim: 'blind',
+				showButtonPanel: true,
+				numberOfMonths: 2,
+				showOtherMonths: true,
+				selectOtherMonths: true
+			});
+		</script>
 	</body>
 </html>
