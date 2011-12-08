@@ -23,7 +23,7 @@ var Taskspin = (function(){
 			if (jsonObjFromLocalStorage.length > 0){
 				$(root).css({marginLeft: "-10000px"});
 				public.setJSON(jsonObjFromLocalStorage);
-				setTimeout(function(){ $(root).hide().css({marginLeft:'0'}).fadeIn();}, 300);
+				setTimeout(function(){ $(root).hide().css({marginLeft:'0'}).fadeIn();}, 400);
 			}
 			// Otherwise place an empty task with a placeholder on the root level
 			else $(base).append($emptyTaskWithPlaceholder.clone().hideCollapseControl());
@@ -76,10 +76,8 @@ var Taskspin = (function(){
 		
 		e.stopPropagation();
 		
-		
 		if(e.keyCode == 68 && e.metaKey)
 		{
-			
 			e.preventDefault();
 		}
 		
@@ -88,7 +86,7 @@ var Taskspin = (function(){
 			( e.keyCode == 27 && e.target.value.trim() == "" )) 
 		{
 			e.preventDefault();
-			var taskSiblingsAndSelf = $task.siblings().andSelf();
+			var taskSiblingsAndSelf = $task.siblings('li').andSelf();
 			var taskIndex = taskSiblingsAndSelf.index($task);
 			var taskDepth = $task.getDepth();
 			if ((taskIndex == 0 && taskDepth == 0) ||
@@ -100,7 +98,11 @@ var Taskspin = (function(){
 			var $tasksParent = $task.getParentTask();
 			
 			// If this is the last task of this level, delete the surrounding ul-tag
-			if ($task.siblings().length == 0 && taskDepth != 0) $task.parent().remove();
+			if (taskSiblingsAndSelf.length == 1 && taskDepth != 0){ 
+				var ul = $task.parent();
+				ul.prev().remove();
+				ul.remove();
+			}
 			else $task.remove();
 
 			// If there are no childrens on the root-level anymore, create an empty task with placeholder
