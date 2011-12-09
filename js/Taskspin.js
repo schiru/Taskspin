@@ -37,6 +37,7 @@ var Taskspin = (function(){
 		$(root).on('keydown', 'input.title', processKeyDown);
 		$(root).on('focus', 'input.title', processFocus);
 		$(root).on('keyup', 'input.dueDate', processDueDateKeyUp);
+		$(root).on('keydown', 'input.dueDate', function(e){ if(e.keyCode == 9) e.preventDefault(); });
 		$(root).on('click', '.' + CHECKBOX_CLASS, processClickOnCheckbox);
 		$(root).on('click', '.' + COLLAPSE_CONTROL_CLASS, processClickOnCollapseControl);
 		$(root).on('change', 'input.dueDate', save);
@@ -53,8 +54,10 @@ var Taskspin = (function(){
 	}	
 	
 	var processDueDateKeyUp = function(e){
-		// When ESC or Return is pressed, focus the task title again	
-		if(e.keyCode == 27 || e.keyCode == 13)
+		e.preventDefault();
+		
+		// When ESC or Return or Tab is pressed, focus the task title again	
+		if(e.keyCode == 27 || e.keyCode == 13 || e.keyCode == 9)
 			$(this).prev().focus();
 	};
 	
