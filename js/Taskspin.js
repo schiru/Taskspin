@@ -6,11 +6,11 @@ var Taskspin = (function(){
 	var COLLAPSE_CONTROL_SIGN_COLLAPSEDCLASS = "collapsed";
 	var root = "#tasks";
 	var base = "#tasks ul:first";
-	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" placeholder="Start typing your first Task here" /><input type="text" class="dueDate" placeholder="No due date" /></li>');
+	var $emptyTaskWithPlaceholder = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" class="title" value="" placeholder="Start typing your first Task here" /><input type="text" class="dueDate" placeholder="No due date" value="" /></li>');
 	var currentFocusedTask;
 
-	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /><input type="text" class="dueDate" placeholder="No due date" /></li>');
-	var $dummyUL = $('<div style="clear:both;"></div><ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" value="" /><input type="text" class="dueDate" placeholder="No due date" /></li><div style="clear:both;"></div></ul>');
+	var $dummy = $('<li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" class="title" value="" /><input type="text" class="dueDate" placeholder="No due date" value="" /></li>');
+	var $dummyUL = $('<div style="clear:both;"></div><ul><li><div class="' + CHECKBOX_CLASS + '" role="checkbox" aria-checked="false"></div><div class="' + COLLAPSE_CONTROL_CLASS + '">' + COLLAPSE_CONTROL_SIGN + '</div><input type="text" class="title" value="" /><input type="text" class="dueDate" placeholder="No due date" value="" /></li><div style="clear:both;"></div></ul>');
 		
 	var init = function(){
 		
@@ -33,9 +33,10 @@ var Taskspin = (function(){
 			$(base).append($emptyTaskWithPlaceholder.clone());
 		}
 		
-		$(root).on('keyup', 'input', processKeyUp);
-		$(root).on('keydown', 'input', processKeyDown);
-		$(root).on('focus', 'input', processFocus);		
+		$(root).on('keyup', 'input.title', processKeyUp);
+		$(root).on('keydown', 'input.title', processKeyDown);
+		$(root).on('focus', 'input.title', processFocus);
+		$(root).on('keyup', 'input.dueDate', processDueDateKeyUp);
 		$(root).on('click', '.' + CHECKBOX_CLASS, processClickOnCheckbox);
 		$(root).on('click', '.' + COLLAPSE_CONTROL_CLASS, processClickOnCollapseControl);
 		$(root).on('change', 'input.dueDate', save);
@@ -50,6 +51,12 @@ var Taskspin = (function(){
 	var processDocumentKeyDown = function(e){
 		
 	}	
+	
+	var processDueDateKeyUp = function(e){
+		// When ESC or Return is pressed, focus the task title again	
+		if(e.keyCode == 27 || e.keyCode == 13)
+			$(this).prev().focus();
+	};
 	
 	var processClickOnCollapseControl = function(e)
 	{
@@ -80,6 +87,7 @@ var Taskspin = (function(){
 		if(e.keyCode == 68 && e.metaKey)
 		{
 			e.preventDefault();
+			$task.focusDueDate();
 		}
 		
 		// CMD+Backspace or ESC on Empty Task
@@ -585,6 +593,10 @@ var Taskspin = (function(){
 		{
 			this.find('input.dueDate').val(value);
 			return this;
+		}
+		
+		, $.fn.focusDueDate = function(){
+			this.find('input.dueDate:first').mousedown();
 		}
 	})(jQuery);
 	
