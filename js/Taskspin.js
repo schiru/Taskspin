@@ -266,7 +266,12 @@ var Taskspin = (function(){
 			// Add values and check checkboxes if needed
 			$inserted.find('input:first').val(obj[i].title);
 			if(obj[i].checked) $inserted.check();
-			if(obj[i].focus) currentFocusedTask = $inserted.focusTask();
+			
+			if(obj[i].focus)
+				window.setTimeout(function(){
+					currentFocusedTask = $inserted.focusTask();
+				}, 350);
+			
 			
 			if(obj[i].childTasks)
 			{
