@@ -37,7 +37,8 @@ var Taskspin = (function(){
 		$(root).on('keydown', 'input.title', processKeyDown);
 		$(root).on('focus', 'input.title', processFocus);
 		$(root).on('keyup', 'input.dueDate', processDueDateKeyUp);
-		$(root).on('keydown', 'input.dueDate', function(e){ if(e.keyCode == 9) e.preventDefault(); });
+		$(root).on('blur', 'input.dueDate', processDueDateBlur);
+		$(root).on('keydown', 'input.dueDate', function(e){ /* Prevent use of tab-key */ if(e.keyCode == 9) e.preventDefault(); });
 		$(root).on('click', '.' + CHECKBOX_CLASS, processClickOnCheckbox);
 		$(root).on('click', '.' + COLLAPSE_CONTROL_CLASS, processClickOnCollapseControl);
 		$(root).on('change', 'input.dueDate', save);
@@ -49,17 +50,44 @@ var Taskspin = (function(){
 		return public;
 	};
 	
+	var leadingZero = function(number){
+		var num = parseInt(number);
+		return num < 10 ? '0' + num : num;
+	};
+	
 	var processDocumentKeyDown = function(e){
 		
 	}	
-	
+
 	var processDueDateKeyUp = function(e){
 		e.preventDefault();
-		
-		// When ESC or Return or Tab is pressed, focus the task title again	
-		if(e.keyCode == 27 || e.keyCode == 13 || e.keyCode == 9)
-			$(this).prev().focus();
+				
+		var $field = $(this);
+				
+		// If ESC is pressed -> delete the value
+		if(e.keyCode == 27)
+			$field.val('').prev().focus();
+				
+		// If Return or Tab is pressed, validate input - then focus the task title again
+		if(e.keyCode == 13 || e.keyCode == 9)
+		{	
+			// Focus the Task-title field
+			$field.prev().focus();
+		}
 	};
+	
+	var processDueDateBlur = function(e){
+		var $field = $(this);
+		
+		var selectedDate = $field.datepicker('getDate');
+		
+		// If incorrect value was entered -> Reset
+		if(selectedDate == null || $field.val().search(/^(0?[1-9]|[12][0-9]|3[01]).(0?[1-9]|1[012]).(\d\d|19\d\d|20\d\d)$/) == -1)
+			$field.val('');
+		else
+		// If correct value was entered -> Fix format to dd.mm.yyyy 
+			$field.val(leadingZero(selectedDate.getDate()) + '.' + leadingZero(selectedDate.getMonth()+1) + '.' + selectedDate.getFullYear());
+	}
 	
 	var processClickOnCollapseControl = function(e)
 	{
@@ -271,10 +299,7 @@ var Taskspin = (function(){
 			if(obj[i].checked) $inserted.check();
 			
 			if(obj[i].focus)
-				window.setTimeout(function(){
-					currentFocusedTask = $inserted.focusTask();
-				}, 350);
-			
+					currentFocusedTask = $inserted;
 			
 			if(obj[i].childTasks)
 			{
@@ -353,7 +378,7 @@ var Taskspin = (function(){
 		, setJSON : function(JSONObj){
 			$(base).remove('*');	
 			parseJSONObject(JSONObj);
-			//setTimeout(public.focusFirstTask, 200);
+			setTimeout(function(){ currentFocusedTask.focusTask(); }, 350);
 			$(root).trigger('treechange');		
 		}
 		
