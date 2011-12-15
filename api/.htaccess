@@ -1,2 +1,6 @@
 RewriteEngine On
-RewriteRule test$ test.php
+
+RewriteCond %{REQUEST_URI} !controller\.php$
+RewriteRule ^(v\d+\.\d+)/(.+)$ $1/controller.php?version=$1&q=$2?%{QUERY_STRING}
+
+Options -Indexes
