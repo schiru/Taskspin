@@ -1,14 +1,17 @@
-<pre>
 <?php
+// BUG: mode can be overriden
 
-/*require_once "../config/config.inc.php";
+require_once "../config/config.inc.php";
+require_once "../config/errors.inc.php";
+require_once "../config/Taskspin.cl.php";
 
-mysql_connect($settings['mysql']['server'], $settings['mysql']['username'], $settings['mysql']['password']);
-mysql_select_db($settings['mysql']['database']);*/
+$api = new Taskspin($settings, $errors);
 
-//$query = $_GET['q'];
-
-print_r($_GET);
-print_r($_SERVER);
-
-//if (file_exists($_GET[]))
+if (file_exists($api->mode . ".mode.php"))
+{
+	require $api->mode . ".mode.php";
+}
+else
+{
+	header ("HTTP/1.0 404 Not Found");
+}

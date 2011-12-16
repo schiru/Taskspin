@@ -1,6 +1,8 @@
 RewriteEngine On
 
 RewriteCond %{REQUEST_URI} !controller\.php$
-RewriteRule ^(v\d+\.\d+)/(.+)$ $1/controller.php?version=$1&q=$2?%{QUERY_STRING}
+RewriteRule ^(v\d+\.\d+)/(.+)$ $1/controller.php?version=$1&mode=$2&%{QUERY_STRING}
+
+#RewriteRule /(.)+.php$ 404.php
 
 Options -Indexes
