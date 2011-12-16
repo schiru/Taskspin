@@ -1,5 +1,7 @@
 <?php
+
 // BUG: mode can be overriden
+session_start();
 
 require_once "../config/config.inc.php";
 require_once "../config/errors.inc.php";

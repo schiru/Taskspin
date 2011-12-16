@@ -28,6 +28,11 @@ class Taskspin
 		mysql_close($this->mysqlConnection);
 	}
 	
+	function isLoggedIn()
+	{
+		return isset($_SESSION['userID']);
+	}
+	
 //-- DATABASE
 	
 	function connectToDatabase()
@@ -43,10 +48,10 @@ class Taskspin
 		switch ($this->method)
 		{
 			case "GET":
-				$this->requestParams = $_GET;
+				$this->params = $_GET;
 				break;
 			case "POST":
-				$this->requestParams = $_POST;
+				$this->params = $_POST;
 				break;
 			case "PUT":
 			case "DELETE":
@@ -63,16 +68,17 @@ class Taskspin
 					foreach ($keyAndValue as $kv)
 					{
 						$slices = explode("=", $kv);
-						$this->requestParams[$slices[0]] = $slices[1];
+						$this->params[$slices[0]] = $slices[1];
 					}
 				}
 				break;
 		}
 	}
 	
-	function sendStatus($code, $message)
+	function sendStatus($code, $message=" ")
 	{
-		if (strpos($message, " ") != -1) header("HTTP/1.0 {$code} " . $this->errors['status'][$code][$message]);
+		if (strpos($message, " ") == -1) header("HTTP/1.0 {$code} " . $this->errors['status'][$code][$message]);
 		else header("HTTP/1.0 " . $code . " " . $message);
+		die();
 	}
 }
