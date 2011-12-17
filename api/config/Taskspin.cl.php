@@ -17,7 +17,7 @@ class Taskspin
 		$this->settings = $settings;
 		$this->errors = $errors;
 		$this->connectToDatabase();
-		$this->mode = $_GET['mode']; unset($_GET['mode']);
+		$this->mode = explode("/", $_GET['mode']); unset($_GET['mode']);
 		$this->version = $_GET['version']; unset($_GET['version']);
 		$this->method = $_SERVER['REQUEST_METHOD'];
 		$this->parseParams();
@@ -39,6 +39,11 @@ class Taskspin
 	{
 		$this->mysqlConnection = mysql_connect($this->settings['mysql']['server'], $this->settings['mysql']['username'], $this->settings['mysql']['password']) or die ($this->errors['mysql']['db-connect']);
 		$this->mysqlDB = mysql_select_db($this->settings['mysql']['database']) or die ($this->errors['mysql']['db-select']);
+	}
+	
+	function getMySQLTable($table)
+	{
+		return $this->settings['mysql']['table-prefix'] . $this->settings['mysql']['tables'][$table];
 	}
 	
 //-- PARAMETERS

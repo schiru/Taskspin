@@ -9,9 +9,9 @@ require_once "../config/Taskspin.cl.php";
 
 $api = new Taskspin($settings, $errors);
 
-if (file_exists($api->mode . ".mode.php"))
+if (file_exists($api->mode[0] . ".mode.php"))
 {
-	require $api->mode . ".mode.php";
+	require $api->mode[0] . ".mode.php";
 }
 else
 {
