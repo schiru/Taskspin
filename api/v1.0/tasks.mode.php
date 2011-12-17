@@ -9,9 +9,9 @@ if ($api->method == "GET")
 	
 	$tasksTable = $api->getMySQLTable("tasks");
 	$tasklistsTable = $api->getMySQLTable("tasklists");
-	$sql = "SELECT t.taskID, t.content, t.dueDate, t.finished, t.parent, t.order, t.belongsTo, tl.tasklistID
+	$sql = "SELECT t.taskID, t.content, t.dueDate, t.finished, t.parent, t.index, t.tasklistID
 		FROM {$tasksTable} AS t
-		JOIN {$tasklistsTable} AS tl ON tl.tasklistID = t.belongsTo
+		JOIN {$tasklistsTable} AS tl USING (tasklistID)
 		WHERE tl.owner = " . $_SESSION['userID'];
 	$result = mysql_query($sql);
 	$tasks = array();
@@ -25,7 +25,7 @@ else if ($api->method == "POST")
 {
 	// If a parameter is missing --> 400 Bad Request
 	if (!isset($api->params['content'], $api->params['dueTo'], 
-			   $api->params['parent'], $api->params['order'], 
+			   $api->params['parent'], $api->params['index'], 
 			   $api->params['tasklistID'])) $api->sendStatus(400);
 	
 	$tasksTable = $api->getMySQLTable("tasks");
