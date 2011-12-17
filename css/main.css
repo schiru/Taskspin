@@ -4,183 +4,18 @@ body{
 	font-family: Helvetica;
 }
 
-header{
+body > header{
 	padding: 20px;
 }
 
 h1#title{
 	color: #E01B4C;
 	font-size: 36px;
+	letter-spacing: 0;
 }
 
-/** Tasklist **/
 
-/*
-
--- Backup
-
-.checkbox{
-	width:8px;
-	height:8px;
-	border:2px solid #333;
-	margin-top:9px;
-	border-radius: 2px;
-	position: absolute;
+::selection{
+	background-color:#333;
+	color: #ccc;
 }
-
-.checkbox:hover{
-	border-color: #E01B4C;
-}
-
-.checkbox:active{
-	background-color: #911031;
-	border-color: #4D0013;
-}
-
-.checked{
-	background-color: #E01B4C;
-	border-color: #4D0013;
-}*/
-
-.checkbox, .collapseControl{
-	width:8px;
-	height:8px;
-	border:2px solid #333;
-	margin-top:9px;
-	border-radius: 2px;
-	position: absolute;
-}
-
-.collapseControl {
-	text-align: center;
-	border: none;
-	margin-left: 19px;
-	font-size: 13px;
-	margin-top:8px;
-	height: auto;
-	width: auto;
-	cursor: default;
-	-moz-transform: rotate(90deg);
-	-webkit-transform: rotate(90deg);
-	-o-transform: rotate(90deg);
-	-ms-transform: rotate(90deg);
-	transform: rotate(90deg);
-	-webkit-transition: -webkit-transform .5s; 
-	-o-transition: -o-transform .5s; 
-	-moz-transition: -moz-transform .5s; 
-}
-
-.collapseControl:hover{
-	text-shadow: 0 0 5px #1186D4;
-}
-
-.collapseControl:active{
-	text-shadow: 0 0 5px #1186D4;
-	color: #1186D4;
-}
-
-.collapsed {
-	-moz-transform: rotate(0deg);
-	-webkit-transform: rotate(0deg);
-	-o-transform: rotate(0deg);
-	-ms-transform: rotate(0deg);
-	transform: rotate(0deg);
-}
-
-.collapseControl + input {
-	padding-left: 40px;
-}
-
-.checkbox:hover{
-	box-shadow: 0 0 5px #1186D4;
-	background-color:#78C0F0;
-}
-
-.checkbox:active{
-	background-color: #236FA1;
-	border-color: #4D0013;
-}
-
-.checked{
-	background-color: #4AA0D9 !important;
-	border-color: #052A42;
-}
-
-li input{
-	border: none;
-	outline: none;
-	font-size:16px;
-	margin-left: -6px;
-	padding: 5px 5px 5px 24px;
-	display:block;
-	width:100%;
-	background-color:#EEE;
-	border:1px solid #CCC;
-	border-bottom:2px solid #999;
-	float:left;
-}
-
-li input:focus{
-	border-bottom-color: #E01B4C;
-	background-color: #DDD;
-}
-
-li textarea.note{
-	background-color: #FFF8D1;
-	border: none;
-	width:100%;
-	padding:10px 17px 10px 10px;
-	margin-left:-6px;
-	font-size:12px;
-	line-height: 14px;
-	letter-spacing:0.1em;
-	outline:none;
-	font-family: Helvetica;
-	border-radius: 0 0 3px 3px;
-	border:1px solid #F2C594;
-	border-top: none;
-}
-
-ul{
-	margin-top: 6px;
-	margin-bottom:6px;
-}
-
-#tasks{
-	width: 1000px;
-}
-
-ul li{
-	margin-left: 30px;
-	list-style-type: none;
-	padding: 0px;
-	clear:left;
-}
-
-body#debug ul{
-	border:1px solid red;
-}
-
-body#debug li{
-	border: 1px solid #333;
-}
-
-input.dueDate{
-	border: none;
-	outline: none;
-	font-size:16px;
-	padding: 5px 5px 5px;
-	display:block;
-	width:90px;
-	text-align:center;
-	background-color:#EEE;
-	border:1px solid #CCC;
-	border-bottom:2px solid #999;
-	margin-right:-150px;
-}
-
-input.dueDate:focus{
-	border-bottom-color: #E01B4C;
-	background-color: #DDD;
-}
-
