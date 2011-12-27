@@ -1,4 +1,5 @@
 AddType text/cache-manifest .appcache
+AddType application/octet-stream .ttf
 
 RewriteEngine On
 RewriteRule ^([a-zA-Z]+)$ $1.html

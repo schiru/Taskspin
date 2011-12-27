@@ -181,7 +181,7 @@ section input[type=password] {
 	letter-spacing: 2px;
 }
 
-section#register input:focus, section#login input:focus{
+section#register input:not([type="checkbox"]):focus, section#login input:not([type="checkbox"]):focus{ /* It is important to not remove the outline of focused checkboxes */
 	border-color: #999;
 	outline: none;
 	background-color: #f9f9f9;
