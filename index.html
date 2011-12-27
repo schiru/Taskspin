@@ -7,6 +7,24 @@
 		<link rel="stylesheet" href="css/main.css" />
 		<link rel="stylesheet" href="css/index.css" />
 		<script src="js/jQuery.js"></script>
+		<script>
+			_keepAsideVisible = false;
+		
+			function keepAsideVisible(){
+				_keepAsideVisible = true;
+			}
+			
+			$(function(){
+				$('#toggleAside').mouseover(function(){
+					$('section#localmode .info').fadeIn();
+				});
+				
+				$('#toggleAside').mouseout(function(){
+					if(!_keepAsideVisible)
+						$('section#localmode .info').fadeOut();
+				});
+			});
+		</script>
 	</head>
 	<body>
 		<div id="wrapper">
@@ -27,13 +45,13 @@
 				</div>
 			</section>
 			<section id="register" class="left">
-				<h1>Register</h1>
-				<div class="curly">}</div>
+				<h1>Register &mdash; Start using Taskspin</h1>
 				<div class="contentPadding">
 					<label for="register_mail">E-Mail</label>
 					<input type="email" id="register_mail" tabindex="3" />
 					<label for="register_password">Password</label>
 					<input type="password" id="register_password" tabindex="3" />
+					<div class="curly">}</div>
 					<button tabindex="3" class="submit">Get Started</button>
 				</div>
 			</section>
@@ -44,7 +62,17 @@
 					<input type="email" id="login_mail" tabindex="2" />
 					<label for="login_password">Password</label>
 					<input type="password" id="login_password" tabindex="2" />
+					<label style="color: #333;"><input type="checkbox"> keep me logged in</label>
 					<button tabindex="2">Login</button>
+				</div>
+			</section>
+			<section class="left" id="localmode">
+				<div class="contentPadding">
+					or try <strong>LocalMode</strong> (<a href="javascript:keepAsideVisible();" id="toggleAside">What is this?</a>) by clicking <a href="home#localmode">here</a>.
+					<ul class="info">
+						<li>All <mark>Tasks will be saved locally</mark> on you browsers local storage, non of your data will be transfered to or saved on our servers.</li>
+						<li><mark>No account required</mark>. If you want you can always create an account later if you want to be able to sync &amp; access your tasks from everywhere.</li>
+					</ul>
 				</div>
 			</section>
 		</div><!-- #wrapper -->

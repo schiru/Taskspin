@@ -40,8 +40,32 @@ section{
 	border: 1px dotted #bbb;
 	border-radius: 5px;
 	line-height: 20px;
-	margin: 15px 0;
+	margin: 15px 0 0 0;
 	box-shadow: 3px 3px 5px #ddd;
+	font-size: 80%;
+}
+
+section a{
+	color: #1877BA;
+}
+
+section ul{
+	margin-left: 15px;
+}
+
+section mark{
+	background-color: #FFFFD4;
+}
+
+section a:hover{
+	color: #3E9BDE;
+}
+
+section .info{
+	font-size: 100%;
+	color: #333;
+	padding-top: 15px;
+	display:none;
 }
 
 section .contentPadding{
@@ -82,70 +106,74 @@ section button:active{
 }
 
 section.left{
-	width:58%;
+	width:61%;
 	float:left;
 }
 
 section.right{
-	width:39%;
+	width:36%;
 	float:right;
 }
 
 section#register{
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
 	background: #cce3ff; /* Old browsers */
-background: -moz-linear-gradient(top,  #cce3ff 0%, #eff8ff 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cce3ff), color-stop(100%,#eff8ff)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* IE10+ */
-background: linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cce3ff', endColorstr='#eff8ff',GradientType=0 ); /* IE6-9 */
-
+	background: -moz-linear-gradient(top,  #cce3ff 0%, #eff8ff 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cce3ff), color-stop(100%,#eff8ff)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* IE10+ */
+	background: linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* W3C */
 }
 
 section#login{
-background: #ffcedf; /* Old browsers */
-background: -moz-linear-gradient(top,  #ffcedf 0%, #fcf4f5 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffcedf), color-stop(100%,#fcf4f5)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* IE10+ */
-background: linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffcedf', endColorstr='#fcf4f5',GradientType=0 ); /* IE6-9 */
+	background: #ffcedf; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffcedf 0%, #fcf4f5 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffcedf), color-stop(100%,#fcf4f5)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* IE10+ */
+	background: linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* W3C */		
+}
 
+section#localmode{
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	border-top: none;
 }
 
 section#register label, section#login label{
 	color: #999;
-	font-size: 70%;
+	font-size: 90%;
 	line-height: 70%;
 	display: block;
 	margin-top: 10px;
 }
 
-section#register input, section#login input{
+section#register input:not([type="checkbox"]), section#login input:not([type="checkbox"]){
 	border: 1px solid #ccc;
 	padding: 5px;
 	border-radius: 3px;
 	margin-top:5px;
-	width: 198px;
+	width: 208px;
 	letter-spacing: 1px;
 }
 
 section#register .curly{
-	font-size: 640%;
+	font-size: 700%;
 	color: #888;
 	opacity: 0.5;
 	font-family: WireOne;
 	position: absolute;
-	margin-left: 234px;
-	margin-top: 57px;
+	margin-left: 237px;
+	margin-top: -45px;
 }
 
 section#register .submit{
 	position: absolute;
 	margin-top: -18px;
-	margin-left: 40px;
+	margin-left: 53px;
 	padding: 5px 25px;
 }
 
@@ -157,6 +185,10 @@ section#register input:focus, section#login input:focus{
 	border-color: #999;
 	outline: none;
 	background-color: #f9f9f9;
+}
+
+section#localmode{
+	margin-top: 0;
 }
 
 
