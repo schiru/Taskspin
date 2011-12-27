@@ -37,18 +37,25 @@ nav ul li.active, nav ul li:active{
 
 section{
 	background-color: rgba(255,255,255, 0.5);
-	border: 1px solid #ccc;
+	border: 1px dotted #bbb;
 	border-radius: 5px;
-	padding: 15px;
 	line-height: 20px;
 	margin: 15px 0;
 	box-shadow: 3px 3px 5px #ddd;
+}
+
+section .contentPadding{
+	margin:15px;
 }
 
 section h1{
 	font-weight: normal;
 	font-size:130%;
 	margin-bottom: 18px;
+	background-color: rgba(255,255,255, 0.4);
+	padding: 15px;
+	border-bottom:1px solid #ddd;
+	color: #333;
 }
 
 section button{
@@ -75,13 +82,37 @@ section button:active{
 }
 
 section.left{
-	width:410px;
+	width:58%;
 	float:left;
 }
 
 section.right{
-	width:210px;
+	width:39%;
 	float:right;
+}
+
+section#register{
+	background: #cce3ff; /* Old browsers */
+background: -moz-linear-gradient(top,  #cce3ff 0%, #eff8ff 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cce3ff), color-stop(100%,#eff8ff)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* IE10+ */
+background: linear-gradient(top,  #cce3ff 0%,#eff8ff 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cce3ff', endColorstr='#eff8ff',GradientType=0 ); /* IE6-9 */
+
+}
+
+section#login{
+background: #ffcedf; /* Old browsers */
+background: -moz-linear-gradient(top,  #ffcedf 0%, #fcf4f5 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffcedf), color-stop(100%,#fcf4f5)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* IE10+ */
+background: linear-gradient(top,  #ffcedf 0%,#fcf4f5 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffcedf', endColorstr='#fcf4f5',GradientType=0 ); /* IE6-9 */
+
 }
 
 section#register label, section#login label{
@@ -103,18 +134,18 @@ section#register input, section#login input{
 
 section#register .curly{
 	font-size: 640%;
-	color: #336cce;
+	color: #888;
 	opacity: 0.5;
 	font-family: WireOne;
 	position: absolute;
-	margin-left: 230px;
+	margin-left: 234px;
 	margin-top: 57px;
 }
 
 section#register .submit{
 	position: absolute;
 	margin-top: -18px;
-	margin-left: 60px;
+	margin-left: 40px;
 	padding: 5px 25px;
 }
 
