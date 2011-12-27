@@ -13,33 +13,34 @@
 			<header>
 				<nav>
 					<ul>
-						<li><a href="about">About</a></li>
-						<li><a href="team">Team</a></li>
-						<li><a href="contact">Contact</a></li>
+						<li tabindex="1" class="active">Home</li>
+						<li tabindex="1">Info</li>
+						<li tabindex="1">Team</li>
+						<li tabindex="1">Contact</li>
 					</ul>
 				</nav>
 				<h1 id="title">Taskspin.</h1>
 			</header>
-			<section id="showcase">
-				<div id="joiner">
-					<article>
-						<header>Local Mode &mdash; </header>
-						<p>All Tasks will be saved to your browsers local storage, no data will be saved on the server. You'll be 100% private.</p>
-					</article>
-					<div class="button">Use this mode</div>
-					
-					<article>
-						<header>Server Mode &mdash; </header>
-						<p>Access your Tasks wherever you are. All tasks are stored securely on our servers. You don't have to be afraid of data loss.</p>
-						<div>
-							<input type="email" placeholder="E-Mail" />
-							<input type="password" placeholder="Password" />
-						</div>
-					</article>
-					<div class="button blue">Use this mode<img src="images/arrow_right.png" /></div>
-
-				</div><!-- #joiner -->
-			</section><!-- #showcase -->
+			<section id="content">
+				The only Taskmanagement tool you'll ever need.
+			</section>
+			<section id="register" class="left">
+				<h1>Register</h1>
+				<div class="curly">}</div>
+				<label for="mail">E-Mail</label>
+				<input type="email" id="mail" tabindex="3" />
+				<label for="password">Password</label>
+				<input type="password" id="password" tabindex="3" />
+				<button tabindex="3" class="submit">Get Started</button>
+			</section>
+			<section id="login" class="right">
+				<h1>Login</h1>
+				<label for="mail">E-Mail</label>
+				<input type="email" id="mail" tabindex="2" />
+				<label for="password">Password</label>
+				<input type="password" id="password" tabindex="2" />
+				<button tabindex="2">Login</button>
+			</section>
 		</div><!-- #wrapper -->
 	</body>
 </html>
