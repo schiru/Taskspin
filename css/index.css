@@ -3,7 +3,8 @@
 	margin: 20px auto;
 }
 
-header{
+h1#title{
+	text-shadow: -1px -1px #DDD, 1px 1px 2px #BBB;
 }
 
 nav{
@@ -190,7 +191,3 @@ section#register input:not([type="checkbox"]):focus, section#login input:not([ty
 section#localmode{
 	margin-top: 0;
 }
-
-
-
-
