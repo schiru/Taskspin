@@ -44,30 +44,79 @@ nav ul li.active, nav ul li:active{
 	border-radius: 4px;
 }
 
-#settings{
+#controlpanel{
 	margin-bottom:20px;
 	background-color: white;
 	border:1px solid #ddd;
 	border-top: none;
 }
 
-#settings ul{
+#controlpanel ul{
 	list-style-type: none;
 	font-size: 70%;
 	margin-left: 10px;
 }
 
-#settings li{
+#controlpanel ul li{
 	padding: 2px 4px;
 	color: #666;
 	display: inline-block;	
 }
 
-#settings li:hover{
+#controlpanel ul li.disabled{
+	color: #aaa;
+}
+
+#controlpanel ul li:not(.disabled):hover{
 	background-color: #1B7AE0;
 	color: white;	
 }
 
-#settings li:active{
+#controlpanel ul li:not(.disabled):active{
 	background-color: #4B729C;
+}
+
+#controlpanel ul#status{
+	float:right;
+	margin-right: 10px;
+}
+
+#controlpanel ul#status li:first-of-type{
+	padding-left: 0;
+	padding-right: 0;
+}
+
+#controlpanel ul li ul{
+	display: none;
+	position: absolute;
+	font-size: 100%;
+	margin-left: -4px;
+	background-color: #1B7AE0;
+	padding-top: 5px;	
+}
+
+#controlpanel ul li:hover ul{
+	display: block !important;
+}
+
+#controlpanel ul li ul li{
+	display: block;
+	color: white;
+}
+
+#controlpanel ul li ul li:not(:last-of-type){
+	border-bottom: 1px dotted rgba(255,255,255, 0.4);
+}
+
+#controlpanel ul li ul li:hover{
+	background-color: white !important;
+	color: #1B7AE0 !important;
+}
+
+#controlpanel ul li ul li:not(:last-of-type):hover{
+	border-bottom: 1px solid white;
+}
+
+#controlpanel ul li ul li:active{
+	background-color: #eee !important;
 }
