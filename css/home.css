@@ -92,7 +92,7 @@ nav ul li.active, nav ul li:active{
 	font-size: 100%;
 	margin-left: -4px;
 	background-color: #1B7AE0;
-	padding-top: 5px;	
+	padding: 1px 0;
 }
 
 #controlpanel ul li:hover ul{

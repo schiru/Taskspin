@@ -395,25 +395,23 @@ var Taskspin = (function(){
 	{
 		$.fn.getDepth = function()
 		{
-			return this.parents('li').length
+			return this.parents('li').length;
 		}
 		
 		, $.fn.getParentTask = function(getNext){
-			var $test = this.parentsUntil(root);
-			if(getNext) 
-				var $next = $test.next();
-			
+			var $test = this.parentsUntil(root, 'li:first');
+
 			// Return an empty array, like jQuery does.
-			if($test.length <= 1)
+			if($test.length < 1)
 				return []; // Li has just one parent (the surrounding UL) but no parent Li
 			
 			if(getNext)
 			{
-				var $next = $test.eq(1).next();
+				var $next = $test.eq(0).next('li');
 				return $next.length ? $next : $test.getParentTask(true);
 			}
 			else
-				return $test.eq(1); // Return the Li at index 1, index 0 is the UL
+				return $test.eq(0); // Return the Li at index 1, index 0 is the UL
 		}
 		
 		, $.fn.hasChildTask = function(){
