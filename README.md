@@ -12,4 +12,4 @@ Note: This project is no longer being actively developed.
 JavaScript, jQuery, PHP, Appcache, localStorage
 
 ## Authors: 
-[Thomas Jirout](github.com/schiru) and [Jonas Keisel](github.com/0xJoKe)
+[Thomas Jirout](https://github.com/schiru) and [Jonas Keisel](https://github.com/0xJoKe)
